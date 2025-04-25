@@ -1,0 +1,53 @@
+<div class="container">
+  <div class="main-content">
+    <h2>Notes</h2>
+    
+    <% if (notes.length === 0) { %>
+      <p>No notes found. <a href="/new-note">Create your first note</a>.</p>
+    <% } else { %>
+      <% notes.forEach(note => { %>
+        <div class="card">
+          <h3 class="card-title"><a href="/notes/<%= note.id %>"><%= note.title %></a></h3>
+          <p><%= note.content.plainText ? note.content.plainText.substring(0, 150) + (note.content.plainText.length > 150 ? '...' : '') : '' %></p>
+          
+          <div>
+            <% note.tags.forEach(tag => { %>
+              <% const foundTag = tags.find(t => t.name === tag); %>
+              <span class="tag" style="background-color: <%= foundTag ? foundTag.color : '#eee' %>">
+                <%= tag %>
+              </span>
+            <% }); %>
+          </div>
+          
+          <div class="actions" style="margin-top: 10px;">
+            <a href="/notes/<%= note.id %>" class="button">View</a>
+            <a href="/notes/<%= note.id %>/edit" class="button secondary">Edit</a>
+            <form action="/notes/<%= note.id %>/delete" method="POST" style="display: inline; margin: 0;">
+              <button type="submit" class="danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      <% }); %>
+    <% } %>
+  </div>
+  
+  <div class="sidebar">
+    <h2>Tags</h2>
+    
+    <% if (tags.length === 0) { %>
+      <p>No tags found. <a href="/new-tag">Create your first tag</a>.</p>
+    <% } else { %>
+      <div class="card">
+        <% tags.forEach(tag => { %>
+          <div style="margin-bottom: 10px;">
+            <span class="tag" style="background-color: <%= tag.color %>"><%= tag.name %></span>
+            <a href="/tags/<%= tag.id %>/notes">View notes</a>
+            <form action="/tags/<%= tag.id %>/delete" method="POST" style="display: inline; margin: 0;">
+              <button type="submit" class="danger" style="padding: 2px 5px; font-size: 12px;">Delete</button>
+            </form>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+<div class="container">
+  <div class="main-content">
+    <h2><%= note.title %></h2>
+    
+    <div class="card">
+      <p><%= note.content.plainText || 'No content' %></p>
+      
+      <div>
+        <% note.tags.forEach(tag => { %>
+          <% const foundTag = tags.find(t => t.name === tag); %>
+          <span class="tag" style="background-color: <%= foundTag ? foundTag.color : '#eee' %>">
+            <%= tag %>
+          </span>
+        <% }); %>
+      </div>
+      
+      <p><small>Created: <%= new Date(note.createdAt).toLocaleString() %></small></p>
+      <p><small>Updated: <%= new Date(note.updatedAt).toLocaleString() %></small></p>
+      
+      <div class="actions">
+        <a href="/notes/<%= note.id %>/edit" class="button">Edit</a>
+        <form action="/notes/<%= note.id %>/delete" method="POST" style="display: inline; margin: 0;">
+          <button type="submit" class="danger">Delete</button>
+        </form>
+        <a href="/" class="button secondary">Back to List</a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="sidebar">
+    <h3>Linked Notes</h3>
+    
+    <% if (note.links.length === 0) { %>
+      <p>No linked notes.</p>
+    <% } else { %>
+      <div class="card">
+        <ul>
+          <% note.links.forEach(link => { %>
+            <li><a href="/notes/<%= link.targetId %>"><%= link.type %></a></li>
+          <% }); %>
+        </ul>
+      </div>
+    <% } %>
+  </div>
+</div>

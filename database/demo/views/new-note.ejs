@@ -1,0 +1,30 @@
+<h2>Create New Note</h2>
+
+<div class="card">
+  <form action="/notes" method="POST">
+    <div>
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="title" required>
+    </div>
+    
+    <div>
+      <label for="content">Content:</label>
+      <textarea id="content" name="content" rows="10" required></textarea>
+    </div>
+    
+    <div>
+      <label for="tags">Tags:</label>
+      <select id="tags" name="tags" multiple>
+        <% tags.forEach(tag => { %>
+          <option value="<%= tag.name %>"><%= tag.name %></option>
+        <% }); %>
+      </select>
+      <small>Hold Ctrl (or Cmd on Mac) to select multiple tags</small>
+    </div>
+    
+    <div class="actions">
+      <button type="submit">Create Note</button>
+      <a href="/" class="button secondary">Cancel</a>
+    </div>
+  </form>
+</div>
