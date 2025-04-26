@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
@@ -228,25 +229,14 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
 
   const handleChange = useCallback((editorState: EditorState) => {
     editorState.read(() => {
-      const htmlString = $generateHtmlFromNodes(editorState);
+      // Get the root node and generate HTML from it
+      const root = $getRoot();
+      const htmlString = $generateHtmlFromNodes(root);
       onChange(htmlString);
     });
   }, [onChange]);
 
-  // Initialize the editor with HTML content
-  const onInitialLoad = useCallback((editor: any) => {
-    if (initialHtml) {
-      const parser = new DOMParser();
-      const dom = parser.parseFromString(initialHtml, 'text/html');
-      
-      editor.update(() => {
-        const nodes = $generateNodesFromDOM(editor, dom);
-        const root = $getRoot();
-        root.clear();
-        $insertNodes(nodes);
-      });
-    }
-  }, [initialHtml]);
+  // We now handle initialization with the InitialContentPlugin
 
   return (
     <EditorWrapper>
@@ -266,10 +256,42 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
           <HistoryPlugin />
           {autoFocus && <AutoFocusPlugin />}
           <OnChangePlugin onChange={handleChange} ignoreSelectionChange />
+          
+          {/* Add an initialization hook for loading initial content */}
+          {initialHtml && <InitialContentPlugin initialContent={initialHtml} />}
         </div>
       </LexicalComposer>
     </EditorWrapper>
   );
 };
+
+// Custom plugin to initialize the editor with HTML content
+function InitialContentPlugin({ initialContent }: { initialContent: string }) {
+  const [editor] = useLexicalComposerContext();
+  
+  useEffect(() => {
+    if (initialContent && initialContent.trim() !== '') {
+      try {
+        const parser = new DOMParser();
+        const dom = parser.parseFromString(initialContent, 'text/html');
+        
+        editor.update(() => {
+          try {
+            const nodes = $generateNodesFromDOM(editor, dom);
+            const root = $getRoot();
+            root.clear();
+            $insertNodes(nodes);
+          } catch (error) {
+            console.error('Error inserting initial nodes:', error);
+          }
+        });
+      } catch (error) {
+        console.error('Error parsing initial HTML:', error);
+      }
+    }
+  }, [editor, initialContent]);
+  
+  return null;
+}
 
 export default NoteEditor;
