@@ -29,7 +29,15 @@ const uiSlice = createSlice({
   initialState,
   reducers: {
     setSidebarWidth: (state, action: PayloadAction<number>) => {
-      state.sidebarWidth = action.payload;
+      // Determine if sidebar should be collapsed based on width
+      const COLLAPSE_THRESHOLD = 60;
+      
+      if (action.payload < COLLAPSE_THRESHOLD) {
+        state.sidebarCollapsed = true;
+      } else {
+        state.sidebarCollapsed = false;
+        state.sidebarWidth = action.payload;
+      }
     },
     toggleSidebar: (state) => {
       state.sidebarCollapsed = !state.sidebarCollapsed;

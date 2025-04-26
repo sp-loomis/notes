@@ -4,7 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Graph-based note-taking app with Electron frontend and Redis backend. Notes contain HTML (Lexical), GeoJSON (Leaflet), and drawings (Excalidraw).
+Graph-based note-taking app with Electron frontend and Redis backend. Notes contain HTML (Lexical),
+GeoJSON (Leaflet), and drawings (Excalidraw).
+
+## Version Control
+
+When you're done making a bunch of changes, run git add and git commit to preserve them.
 
 ## Development Phases
 
@@ -34,3 +39,4 @@ Graph-based note-taking app with Electron frontend and Redis backend. Notes cont
 - **API Pattern**: Async/await with proper error handling
 - **Data Models**: Interfaces for all data structures (Notes, Tags, Components)
 - **Testing**: Jest for unit tests, Playwright for E2E tests
+- **Libraries** Use well-tested libraries rather than building from scratch, where possible.

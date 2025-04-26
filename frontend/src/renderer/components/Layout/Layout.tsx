@@ -1,10 +1,15 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../store';
-import { setSidebarWidth, toggleSidebar } from '../../store/uiSlice';
-import Titlebar from './Titlebar';
-import Sidebar from './Sidebar';
+import React from "react";
+import styled from "styled-components";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../store";
+import { setSidebarWidth, toggleSidebar } from "../../store/uiSlice";
+import Titlebar from "./Titlebar";
+import Sidebar from "./Sidebar";
+import { 
+  Panel, 
+  PanelGroup, 
+  PanelResizeHandle 
+} from "react-resizable-panels";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -24,74 +29,89 @@ const MainContent = styled.div`
   overflow: hidden;
 `;
 
-const Content = styled.div`
-  flex: 1;
+const ContentPanel = styled.div`
+  height: 100%;
   overflow: auto;
   background-color: var(--editor-color);
   position: relative;
 `;
 
-const ResizeHandle = styled.div`
-  width: 5px;
-  height: 100%;
+const CustomResizeHandle = styled(PanelResizeHandle)`
+  width: 8px;
+  margin: 0 -4px;
+  background-color: transparent;
+  position: relative;
   cursor: col-resize;
-  background-color: var(--border-color);
+  z-index: 10;
+  transition: background-color 0.2s;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 3px;
+    right: 3px;
+    bottom: 0;
+    width: 2px;
+    height: 100%;
+    margin: 0 auto;
+    background-color: var(--border-color);
+    opacity: 0.4;
+    transition: opacity 0.2s, background-color 0.2s;
+  }
   
-  &:hover {
+  &:hover::after {
+    opacity: 1;
     background-color: var(--primary-color);
   }
 `;
 
+// Minimum width for the sidebar in pixels
+const MIN_SIDEBAR_WIDTH = 40;
+
+// This percentage threshold controls when the sidebar collapses
+const COLLAPSE_THRESHOLD_PERCENT = 8; // If sidebar is less than 8% of container, collapse it
+
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const dispatch = useDispatch();
   const { sidebarWidth, sidebarCollapsed } = useSelector((state: RootState) => state.ui);
-  const resizeRef = React.useRef<HTMLDivElement>(null);
   
-  // Handle sidebar resizing
-  React.useEffect(() => {
-    const resizeHandle = resizeRef.current;
-    if (!resizeHandle) return;
+  // Convert pixel width to percentage for the library
+  const sidebarInitialPercent = !sidebarCollapsed ? Math.max(15, (sidebarWidth / window.innerWidth) * 100) : 5;
+  
+  // Handle resize events from the panel library
+  const handleResize = (sizes: number[]) => {
+    // Convert percentage back to pixels
+    const containerWidth = window.innerWidth;
+    const newWidthPx = Math.round((sizes[0] / 100) * containerWidth);
     
-    let startX = 0;
-    let startWidth = 0;
-    
-    const onMouseDown = (e: MouseEvent) => {
-      startX = e.clientX;
-      startWidth = sidebarWidth;
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
-    };
-    
-    const onMouseMove = (e: MouseEvent) => {
-      const newWidth = startWidth + (e.clientX - startX);
-      if (newWidth > 100 && newWidth < 500) {
-        dispatch(setSidebarWidth(newWidth));
-      }
-    };
-    
-    const onMouseUp = () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    };
-    
-    resizeHandle.addEventListener('mousedown', onMouseDown);
-    
-    return () => {
-      resizeHandle.removeEventListener('mousedown', onMouseDown);
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    };
-  }, [dispatch, sidebarWidth]);
+    // Update Redux state - both width and collapse status are handled in the reducer
+    dispatch(setSidebarWidth(newWidthPx));
+  };
   
   return (
     <LayoutContainer>
       <Titlebar />
       <MainContent>
-        <Sidebar width={sidebarWidth} collapsed={sidebarCollapsed} />
-        {!sidebarCollapsed && <ResizeHandle ref={resizeRef} />}
-        <Content>
-          {children}
-        </Content>
+        <PanelGroup direction="horizontal" onLayout={handleResize}>
+          <Panel 
+            id="sidebar" 
+            defaultSize={sidebarInitialPercent}
+            minSize={4} // Minimum size as percentage
+            collapsible={true}
+            collapsedSize={MIN_SIDEBAR_WIDTH}
+          >
+            <Sidebar width={sidebarWidth} collapsed={sidebarCollapsed} />
+          </Panel>
+          
+          <CustomResizeHandle />
+          
+          <Panel id="content">
+            <ContentPanel>
+              {children}
+            </ContentPanel>
+          </Panel>
+        </PanelGroup>
       </MainContent>
     </LayoutContainer>
   );

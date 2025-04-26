@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
-import { setSidebarMode, toggleSidebar } from '../../store/uiSlice';
-import { VscNote, VscTag, VscSearch, VscLink, VscChevronLeft, VscChevronRight } from 'react-icons/vsc';
+import { setSidebarMode } from '../../store/uiSlice';
+import { VscNote, VscTag, VscSearch, VscLink } from 'react-icons/vsc';
 import NotesList from '../Notes/NotesList';
 import TagsList from '../Tags/TagsList';
 import SearchView from '../Search/SearchView';
@@ -21,7 +21,6 @@ const SidebarContainer = styled.div<{ width: number; $collapsed: boolean }>`
   display: flex;
   flex-direction: row;
   overflow: hidden;
-  transition: width 0.2s ease;
   position: relative;
 `;
 
@@ -63,31 +62,6 @@ const SidebarContent = styled.div`
   overflow: auto;
 `;
 
-const CollapseButton = styled.button`
-  position: absolute;
-  right: -15px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--background-color);
-  border: 1px solid var(--border-color);
-  color: var(--text-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10;
-  
-  &:hover {
-    background-color: var(--hover-color);
-  }
-  
-  svg {
-    font-size: 16px;
-  }
-`;
 
 const Sidebar: React.FC<SidebarProps> = ({ width, collapsed }) => {
   const dispatch = useDispatch();
@@ -95,10 +69,6 @@ const Sidebar: React.FC<SidebarProps> = ({ width, collapsed }) => {
   
   const handleTabChange = (mode: 'notes' | 'tags' | 'search' | 'links') => {
     dispatch(setSidebarMode(mode));
-  };
-  
-  const handleToggleSidebar = () => {
-    dispatch(toggleSidebar());
   };
   
   // Render the appropriate sidebar content based on current mode
@@ -158,13 +128,6 @@ const Sidebar: React.FC<SidebarProps> = ({ width, collapsed }) => {
       <SidebarContent>
         {renderContent()}
       </SidebarContent>
-      
-      <CollapseButton 
-        onClick={handleToggleSidebar} 
-        title={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-      >
-        {collapsed ? <VscChevronRight /> : <VscChevronLeft />}
-      </CollapseButton>
     </SidebarContainer>
   );
 };
