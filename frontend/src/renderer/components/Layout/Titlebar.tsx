@@ -3,11 +3,9 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { toggleTheme } from '../../store/uiSlice';
-import { VscMenu, VscChromeClose, VscChromeMinimize, VscChromeMaximize, VscChromeRestore, VscColorMode } from 'react-icons/vsc';
+import { VscChromeClose, VscChromeMinimize, VscChromeMaximize, VscChromeRestore, VscColorMode } from 'react-icons/vsc';
 
-interface TitlebarProps {
-  onToggleSidebar: () => void;
-}
+interface TitlebarProps {}
 
 const TitlebarContainer = styled.div`
   height: 30px;
@@ -56,7 +54,7 @@ const WindowButton = styled(MenuButton)`
   }
 `;
 
-const Titlebar: React.FC<TitlebarProps> = ({ onToggleSidebar }) => {
+const Titlebar: React.FC<TitlebarProps> = () => {
   const dispatch = useDispatch();
   const theme = useSelector((state: RootState) => state.ui.theme);
   const [isMaximized, setIsMaximized] = React.useState(false);
@@ -78,10 +76,6 @@ const Titlebar: React.FC<TitlebarProps> = ({ onToggleSidebar }) => {
   
   return (
     <TitlebarContainer>
-      <MenuButton onClick={onToggleSidebar} title="Toggle Sidebar">
-        <VscMenu />
-      </MenuButton>
-      
       <WindowTitle>Notes App</WindowTitle>
       
       <MenuButton onClick={handleThemeToggle} title="Toggle Theme">

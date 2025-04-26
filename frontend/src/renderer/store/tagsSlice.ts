@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { prepareForRedux } from '../utils/dateUtils';
 
 interface TagsState {
   tags: Tag[];
@@ -16,24 +17,28 @@ const initialState: TagsState = {
 
 // Async Thunks
 export const fetchTags = createAsyncThunk('tags/fetchTags', async () => {
-  return await window.api.tags.list();
+  const tags = await window.api.tags.list();
+  return prepareForRedux(tags);
 });
 
 export const fetchTagById = createAsyncThunk('tags/fetchTagById', async (id: string) => {
-  return await window.api.tags.get(id);
+  const tag = await window.api.tags.get(id);
+  return prepareForRedux(tag);
 });
 
 export const createTag = createAsyncThunk(
   'tags/createTag',
   async (tagData: Omit<Tag, 'id' | 'createdAt' | 'updatedAt'>) => {
-    return await window.api.tags.create(tagData);
+    const newTag = await window.api.tags.create(tagData);
+    return prepareForRedux(newTag);
   }
 );
 
 export const updateTag = createAsyncThunk(
   'tags/updateTag',
   async ({ id, tagData }: { id: string; tagData: Partial<Omit<Tag, 'id' | 'createdAt'>> }) => {
-    return await window.api.tags.update(id, tagData);
+    const updatedTag = await window.api.tags.update(id, tagData);
+    return prepareForRedux(updatedTag);
   }
 );
 
@@ -43,7 +48,8 @@ export const deleteTag = createAsyncThunk('tags/deleteTag', async (id: string) =
 });
 
 export const findTagByName = createAsyncThunk('tags/findTagByName', async (name: string) => {
-  return await window.api.tags.findByName(name);
+  const tag = await window.api.tags.findByName(name);
+  return tag ? prepareForRedux(tag) : null;
 });
 
 // Slice

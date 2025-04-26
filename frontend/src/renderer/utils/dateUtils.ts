@@ -32,3 +32,36 @@ export function formatDate(date: Date | string): string {
   // Otherwise, show date in format: "Jan 1, 2021"
   return dateObj.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
 }
+
+/**
+ * Helper function to prepare data for Redux by serializing Date objects
+ * @param data The data object to prepare for Redux
+ * @returns A new object with Date objects converted to ISO strings
+ */
+export function prepareForRedux<T>(data: T): T {
+  if (!data || typeof data !== 'object') {
+    return data;
+  }
+  
+  // Handle arrays
+  if (Array.isArray(data)) {
+    return data.map(item => prepareForRedux(item)) as unknown as T;
+  }
+  
+  // Handle objects
+  const result = { ...data };
+  
+  for (const key in result) {
+    const value = result[key];
+    
+    if (value instanceof Date) {
+      // Convert Date to ISO string
+      result[key] = value.toISOString() as any;
+    } else if (value && typeof value === 'object') {
+      // Recursively process nested objects
+      result[key] = prepareForRedux(value);
+    }
+  }
+  
+  return result;
+}

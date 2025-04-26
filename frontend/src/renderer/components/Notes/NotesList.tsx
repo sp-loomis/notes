@@ -37,15 +37,15 @@ const NotesGrid = styled.div`
   padding: 8px;
 `;
 
-const NoteCard = styled.div<{ active: boolean }>`
+const NoteCard = styled.div<{ $active: boolean }>`
   padding: 10px;
   margin-bottom: 8px;
   border-radius: 3px;
-  background-color: ${props => props.active ? 'var(--selection-color)' : 'var(--secondary-color)'};
+  background-color: ${props => props.$active ? 'var(--selection-color)' : 'var(--secondary-color)'};
   cursor: pointer;
   
   &:hover {
-    background-color: ${props => props.active ? 'var(--selection-color)' : 'var(--hover-color)'};
+    background-color: ${props => props.$active ? 'var(--selection-color)' : 'var(--hover-color)'};
   }
 `;
 
@@ -174,7 +174,7 @@ const NotesList: React.FC = () => {
           notes.map(note => (
             <NoteCard 
               key={note.id} 
-              active={currentNote?.id === note.id}
+              $active={currentNote?.id === note.id}
               onClick={() => handleSelectNote(note)}
             >
               <NoteTitle>{note.title}</NoteTitle>

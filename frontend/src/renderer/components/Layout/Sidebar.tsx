@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
-import { setSidebarMode } from '../../store/uiSlice';
-import { VscNote, VscTag, VscSearch, VscLink } from 'react-icons/vsc';
+import { setSidebarMode, toggleSidebar } from '../../store/uiSlice';
+import { VscNote, VscTag, VscSearch, VscLink, VscChevronLeft, VscChevronRight } from 'react-icons/vsc';
 import NotesList from '../Notes/NotesList';
 import TagsList from '../Tags/TagsList';
 import SearchView from '../Search/SearchView';
@@ -14,31 +14,36 @@ interface SidebarProps {
   collapsed: boolean;
 }
 
-const SidebarContainer = styled.div<{ width: number; collapsed: boolean }>`
+const SidebarContainer = styled.div<{ width: number; $collapsed: boolean }>`
   height: 100%;
-  width: ${props => (props.collapsed ? '40px' : `${props.width}px`)};
+  width: ${props => (props.$collapsed ? '40px' : `${props.width}px`)};
   background-color: var(--sidebar-color);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   overflow: hidden;
   transition: width 0.2s ease;
+  position: relative;
 `;
 
-const SidebarTabs = styled.div`
+const SidebarTabs = styled.div<{ $collapsed?: boolean }>`
   display: flex;
-  justify-content: ${props => props.theme.collapsed ? 'center' : 'flex-start'};
-  border-bottom: 1px solid var(--border-color);
+  flex-direction: column;
+  align-items: center;
+  border-right: 1px solid var(--border-color);
+  height: 100%;
 `;
 
-const TabButton = styled.button<{ active: boolean }>`
-  background: ${props => (props.active ? 'var(--active-color)' : 'transparent')};
+const TabButton = styled.button<{ $active: boolean }>`
+  background: ${props => (props.$active ? 'var(--active-color)' : 'transparent')};
   border: none;
   color: var(--text-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  padding: 10px;
   cursor: pointer;
+  width: 40px;
+  height: 40px;
   
   &:hover {
     background-color: var(--hover-color);
@@ -49,8 +54,7 @@ const TabButton = styled.button<{ active: boolean }>`
   }
   
   span {
-    margin-left: 8px;
-    font-size: 13px;
+    display: none;
   }
 `;
 
@@ -59,12 +63,42 @@ const SidebarContent = styled.div`
   overflow: auto;
 `;
 
+const CollapseButton = styled.button`
+  position: absolute;
+  right: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  
+  &:hover {
+    background-color: var(--hover-color);
+  }
+  
+  svg {
+    font-size: 16px;
+  }
+`;
+
 const Sidebar: React.FC<SidebarProps> = ({ width, collapsed }) => {
   const dispatch = useDispatch();
   const { sidebarMode } = useSelector((state: RootState) => state.ui);
   
   const handleTabChange = (mode: 'notes' | 'tags' | 'search' | 'links') => {
     dispatch(setSidebarMode(mode));
+  };
+  
+  const handleToggleSidebar = () => {
+    dispatch(toggleSidebar());
   };
   
   // Render the appropriate sidebar content based on current mode
@@ -86,48 +120,51 @@ const Sidebar: React.FC<SidebarProps> = ({ width, collapsed }) => {
   };
   
   return (
-    <SidebarContainer width={width} collapsed={collapsed}>
-      <SidebarTabs>
+    <SidebarContainer width={width} $collapsed={collapsed}>
+      <SidebarTabs $collapsed={collapsed}>
         <TabButton 
-          active={sidebarMode === 'notes'} 
+          $active={sidebarMode === 'notes'} 
           onClick={() => handleTabChange('notes')}
           title="Notes"
         >
           <VscNote />
-          {!collapsed && <span>Notes</span>}
         </TabButton>
         
         <TabButton 
-          active={sidebarMode === 'tags'} 
+          $active={sidebarMode === 'tags'} 
           onClick={() => handleTabChange('tags')}
           title="Tags"
         >
           <VscTag />
-          {!collapsed && <span>Tags</span>}
         </TabButton>
         
         <TabButton 
-          active={sidebarMode === 'search'} 
+          $active={sidebarMode === 'search'} 
           onClick={() => handleTabChange('search')}
           title="Search"
         >
           <VscSearch />
-          {!collapsed && <span>Search</span>}
         </TabButton>
         
         <TabButton 
-          active={sidebarMode === 'links'} 
+          $active={sidebarMode === 'links'} 
           onClick={() => handleTabChange('links')}
           title="Links"
         >
           <VscLink />
-          {!collapsed && <span>Links</span>}
         </TabButton>
       </SidebarTabs>
       
       <SidebarContent>
         {renderContent()}
       </SidebarContent>
+      
+      <CollapseButton 
+        onClick={handleToggleSidebar} 
+        title={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+      >
+        {collapsed ? <VscChevronRight /> : <VscChevronLeft />}
+      </CollapseButton>
     </SidebarContainer>
   );
 };

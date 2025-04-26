@@ -83,13 +83,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
   }, [dispatch, sidebarWidth]);
   
-  const toggleSidebarView = () => {
-    dispatch(toggleSidebar());
-  };
-  
   return (
     <LayoutContainer>
-      <Titlebar onToggleSidebar={toggleSidebarView} />
+      <Titlebar />
       <MainContent>
         <Sidebar width={sidebarWidth} collapsed={sidebarCollapsed} />
         {!sidebarCollapsed && <ResizeHandle ref={resizeRef} />}

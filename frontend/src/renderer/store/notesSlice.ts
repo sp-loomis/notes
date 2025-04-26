@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { prepareForRedux } from '../utils/dateUtils';
 
 interface NotesState {
   notes: Note[];
@@ -18,24 +19,28 @@ const initialState: NotesState = {
 
 // Async Thunks
 export const fetchNotes = createAsyncThunk('notes/fetchNotes', async () => {
-  return await window.api.notes.list();
+  const notes = await window.api.notes.list();
+  return prepareForRedux(notes);
 });
 
 export const fetchNoteById = createAsyncThunk('notes/fetchNoteById', async (id: string) => {
-  return await window.api.notes.get(id);
+  const note = await window.api.notes.get(id);
+  return prepareForRedux(note);
 });
 
 export const createNote = createAsyncThunk(
   'notes/createNote',
   async (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => {
-    return await window.api.notes.create(noteData);
+    const newNote = await window.api.notes.create(noteData);
+    return prepareForRedux(newNote);
   }
 );
 
 export const updateNote = createAsyncThunk(
   'notes/updateNote',
   async ({ id, noteData }: { id: string; noteData: Partial<Omit<Note, 'id' | 'createdAt'>> }) => {
-    return await window.api.notes.update(id, noteData);
+    const updatedNote = await window.api.notes.update(id, noteData);
+    return prepareForRedux(updatedNote);
   }
 );
 
@@ -45,11 +50,13 @@ export const deleteNote = createAsyncThunk('notes/deleteNote', async (id: string
 });
 
 export const fetchNotesByTag = createAsyncThunk('notes/fetchNotesByTag', async (tag: string) => {
-  return await window.api.notes.getByTag(tag);
+  const notes = await window.api.notes.getByTag(tag);
+  return prepareForRedux(notes);
 });
 
 export const fetchLinkedNotes = createAsyncThunk('notes/fetchLinkedNotes', async (noteId: string) => {
-  return await window.api.notes.getLinked(noteId);
+  const linkedNotes = await window.api.notes.getLinked(noteId);
+  return prepareForRedux(linkedNotes);
 });
 
 // Slice

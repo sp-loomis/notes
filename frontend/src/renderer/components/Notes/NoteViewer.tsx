@@ -125,7 +125,7 @@ const LinkedNotesSection = styled.div`
   padding-top: 15px;
 `;
 
-const LinkedNotesHeader = styled.div<{ expanded: boolean }>`
+const LinkedNotesHeader = styled.div<{ $expanded: boolean }>`
   display: flex;
   align-items: center;
   gap: 5px;
@@ -138,12 +138,12 @@ const LinkedNotesHeader = styled.div<{ expanded: boolean }>`
   
   svg {
     transition: transform 0.2s ease;
-    transform: ${props => props.expanded ? 'rotate(90deg)' : 'rotate(0)'};
+    transform: ${props => props.$expanded ? 'rotate(90deg)' : 'rotate(0)'};
   }
 `;
 
-const LinkedNotesList = styled.div<{ expanded: boolean }>`
-  display: ${props => props.expanded ? 'block' : 'none'};
+const LinkedNotesList = styled.div<{ $expanded: boolean }>`
+  display: ${props => props.$expanded ? 'block' : 'none'};
   margin-top: 10px;
 `;
 
@@ -263,14 +263,14 @@ const NoteViewer: React.FC = () => {
         {status !== 'loading' && (
           <LinkedNotesSection>
             <LinkedNotesHeader 
-              expanded={linkedNotesExpanded} 
+              $expanded={linkedNotesExpanded} 
               onClick={toggleLinkedNotes}
             >
               {linkedNotesExpanded ? <VscChevronDown /> : <VscChevronRight />}
               <span>Linked Notes ({linkedNotes.length + currentNote.links.length})</span>
             </LinkedNotesHeader>
             
-            <LinkedNotesList expanded={linkedNotesExpanded}>
+            <LinkedNotesList $expanded={linkedNotesExpanded}>
               <h4>Outgoing Links</h4>
               {currentNote.links.length === 0 ? (
                 <p>No outgoing links</p>
