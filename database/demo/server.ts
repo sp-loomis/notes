@@ -152,6 +152,80 @@ app.post('/notes/:id', async (req, res) => {
   }
 });
 
+// Link notes form
+app.get('/notes/:id/link', async (req, res) => {
+  try {
+    const noteService = dbService.getNoteService();
+    
+    const sourceNote = await noteService.getNote(req.params.id);
+    const allNotes = await noteService.listNotes();
+    
+    // Filter out the current note and already linked notes
+    const linkedNoteIds = sourceNote.links.map(link => link.targetId);
+    const availableNotes = allNotes.filter(note => 
+      note.id !== sourceNote.id && !linkedNoteIds.includes(note.id)
+    );
+    
+    res.render('link-notes', { sourceNote, availableNotes });
+  } catch (error) {
+    console.error('Error getting notes for linking:', error);
+    res.status(500).render('error', { error });
+  }
+});
+
+// Create link action
+app.post('/notes/:id/link', async (req, res) => {
+  try {
+    const noteService = dbService.getNoteService();
+    
+    const sourceId = req.params.id;
+    const { targetId, linkType } = req.body;
+    
+    // Get the current note
+    const sourceNote = await noteService.getNote(sourceId);
+    
+    // Add the new link
+    const updatedLinks = [
+      ...sourceNote.links,
+      { targetId, type: linkType || 'related' }
+    ];
+    
+    // Update the note with the new links
+    await noteService.updateNote(sourceId, { links: updatedLinks });
+    
+    res.redirect(`/notes/${sourceId}`);
+  } catch (error) {
+    console.error('Error creating link:', error);
+    res.status(500).render('error', { error });
+  }
+});
+
+// Remove link action
+app.post('/notes/:id/unlink/:targetId', async (req, res) => {
+  try {
+    const noteService = dbService.getNoteService();
+    
+    const sourceId = req.params.id;
+    const targetId = req.params.targetId;
+    
+    // Get the current note
+    const sourceNote = await noteService.getNote(sourceId);
+    
+    // Remove the link
+    const updatedLinks = sourceNote.links.filter(
+      link => link.targetId !== targetId
+    );
+    
+    // Update the note with the new links
+    await noteService.updateNote(sourceId, { links: updatedLinks });
+    
+    res.redirect(`/notes/${sourceId}`);
+  } catch (error) {
+    console.error('Error removing link:', error);
+    res.status(500).render('error', { error });
+  }
+});
+
 // Tags
 
 // Create tag form
@@ -204,6 +278,51 @@ app.get('/tags/:id/notes', async (req, res) => {
     res.render('tag-notes', { tag, notes });
   } catch (error) {
     console.error('Error getting notes by tag:', error);
+    res.status(500).render('error', { error });
+  }
+});
+
+// View note graph (all connections)
+app.get('/notes/:id/graph', async (req, res) => {
+  try {
+    const noteService = dbService.getNoteService();
+    
+    const note = await noteService.getNote(req.params.id);
+    
+    // Find notes that the current note links to
+    const targetNotes = [];
+    for (const link of note.links) {
+      try {
+        const targetNote = await noteService.getNote(link.targetId);
+        targetNotes.push({
+          note: targetNote,
+          linkType: link.type,
+          direction: 'outgoing'
+        });
+      } catch (error) {
+        console.error(`Could not find linked note ${link.targetId}:`, error);
+      }
+    }
+    
+    // Find notes that link to the current note
+    const incomingNotes = await noteService.findLinkedNotes(note.id);
+    const sourceNotes = await Promise.all(
+      incomingNotes.map(async (sourceNote) => {
+        const link = sourceNote.links.find(link => link.targetId === note.id);
+        return {
+          note: sourceNote,
+          linkType: link ? link.type : 'unknown',
+          direction: 'incoming'
+        };
+      })
+    );
+    
+    // Combine both directions
+    const connections = [...targetNotes, ...sourceNotes];
+    
+    res.render('note-graph', { note, connections });
+  } catch (error) {
+    console.error('Error getting note graph:', error);
     res.status(500).render('error', { error });
   }
 });

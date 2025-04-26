@@ -1,0 +1,57 @@
+<h2>Note Graph for "<%= note.title %>"</h2>
+
+<div class="card">
+  <h3>Current Note: <%= note.title %></h3>
+  <p><%= note.content.plainText ? note.content.plainText.substring(0, 150) + (note.content.plainText.length > 150 ? '...' : '') : 'No content' %></p>
+  
+  <a href="/notes/<%= note.id %>" class="button">View Note Details</a>
+</div>
+
+<% if (connections.length === 0) { %>
+  <p>This note is not connected to any other notes. <a href="/notes/<%= note.id %>/link">Create a link</a>.</p>
+<% } else { %>
+  <h3>Connections</h3>
+  
+  <div id="graph-container" style="width: 100%; margin-top: 20px;">
+    <!-- Outgoing links (notes this note links to) -->
+    <% const outgoingLinks = connections.filter(conn => conn.direction === 'outgoing'); %>
+    <% if (outgoingLinks.length > 0) { %>
+      <div class="card">
+        <h4>Outgoing Links</h4>
+        <p>Notes that this note links to:</p>
+        <ul>
+          <% outgoingLinks.forEach(conn => { %>
+            <li style="margin-bottom: 10px;">
+              <strong><%= conn.linkType %>:</strong> 
+              <a href="/notes/<%= conn.note.id %>"><%= conn.note.title %></a>
+              <small><%= conn.note.content.plainText ? `- ${conn.note.content.plainText.substring(0, 50)}${conn.note.content.plainText.length > 50 ? '...' : ''}` : '' %></small>
+            </li>
+          <% }); %>
+        </ul>
+      </div>
+    <% } %>
+    
+    <!-- Incoming links (notes that link to this note) -->
+    <% const incomingLinks = connections.filter(conn => conn.direction === 'incoming'); %>
+    <% if (incomingLinks.length > 0) { %>
+      <div class="card">
+        <h4>Incoming Links</h4>
+        <p>Notes that link to this note:</p>
+        <ul>
+          <% incomingLinks.forEach(conn => { %>
+            <li style="margin-bottom: 10px;">
+              <strong><%= conn.linkType %>:</strong> 
+              <a href="/notes/<%= conn.note.id %>"><%= conn.note.title %></a>
+              <small><%= conn.note.content.plainText ? `- ${conn.note.content.plainText.substring(0, 50)}${conn.note.content.plainText.length > 50 ? '...' : ''}` : '' %></small>
+            </li>
+          <% }); %>
+        </ul>
+      </div>
+    <% } %>
+  </div>
+  
+  <div style="margin-top: 20px;">
+    <a href="/notes/<%= note.id %>" class="button secondary">Back to Note</a>
+    <a href="/" class="button secondary">Back to Home</a>
+  </div>
+<% } %>

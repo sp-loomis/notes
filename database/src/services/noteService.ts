@@ -1,11 +1,11 @@
-import { RedisClientType } from 'redis';
-import { v4 as uuidv4 } from 'uuid';
-import { Note } from '../models/types';
-import { NotFoundError, ValidationError } from '../utils/errors';
+import { RedisClientType } from "redis";
+import { v4 as uuidv4 } from "uuid";
+import { Note } from "../models/types";
+import { NotFoundError, ValidationError } from "../utils/errors";
 
 export class NoteService {
   private client: any; // Use any for tests with redis-mock
-  private readonly keyPrefix = 'note:';
+  private readonly keyPrefix = "note:";
 
   constructor(redisClient: any) {
     this.client = redisClient;
@@ -16,10 +16,10 @@ export class NoteService {
    * @param noteData Note data without id and timestamps
    * @returns The created note with id and timestamps
    */
-  async createNote(noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Promise<Note> {
+  async createNote(noteData: Omit<Note, "id" | "createdAt" | "updatedAt">): Promise<Note> {
     // Validate note data
     if (!noteData.title) {
-      throw new ValidationError('Note title is required');
+      throw new ValidationError("Note title is required");
     }
 
     const now = new Date();
@@ -29,12 +29,12 @@ export class NoteService {
       updatedAt: now,
       ...noteData,
       tags: noteData.tags || [],
-      links: noteData.links || []
+      links: noteData.links || [],
     };
 
     // Store note in Redis
     const key = this.keyPrefix + note.id;
-    await this.client.json.set(key, '$', note);
+    await this.client.json.set(key, "$", note);
 
     return note;
   }
@@ -46,10 +46,10 @@ export class NoteService {
    */
   async getNote(id: string): Promise<Note> {
     const key = this.keyPrefix + id;
-    const note = await this.client.json.get(key) as Note | null;
+    const note = (await this.client.json.get(key)) as Note | null;
 
     if (!note) {
-      throw new NotFoundError('Note', id);
+      throw new NotFoundError("Note", id);
     }
 
     // Convert date strings back to Date objects
@@ -65,27 +65,27 @@ export class NoteService {
    * @param noteData Updated note data
    * @returns The updated note
    */
-  async updateNote(id: string, noteData: Partial<Omit<Note, 'id' | 'createdAt'>>): Promise<Note> {
+  async updateNote(id: string, noteData: Partial<Omit<Note, "id" | "createdAt">>): Promise<Note> {
     const key = this.keyPrefix + id;
-    
+
     // Check if note exists
     const exists = await this.client.exists(key);
     if (!exists) {
-      throw new NotFoundError('Note', id);
+      throw new NotFoundError("Note", id);
     }
 
     // Get current note
     const currentNote = await this.getNote(id);
-    
+
     // Update note
     const updatedNote: Note = {
       ...currentNote,
       ...noteData,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // Store updated note
-    await this.client.json.set(key, '$', updatedNote);
+    await this.client.json.set(key, "$", updatedNote);
 
     return updatedNote;
   }
@@ -98,11 +98,11 @@ export class NoteService {
   async deleteNote(id: string): Promise<boolean> {
     const key = this.keyPrefix + id;
     const deleted = await this.client.del(key);
-    
+
     if (deleted === 0) {
-      throw new NotFoundError('Note', id);
+      throw new NotFoundError("Note", id);
     }
-    
+
     return true;
   }
 
@@ -115,29 +115,30 @@ export class NoteService {
   async listNotes(limit?: number, offset?: number): Promise<Note[]> {
     // Get all note keys
     const keys = await this.client.keys(`${this.keyPrefix}*`);
-    
+
     if (keys.length === 0) {
       return [];
     }
 
     // Apply pagination if specified
-    const paginatedKeys = offset || limit 
-      ? keys.slice(offset || 0, offset ? (offset + (limit || keys.length)) : limit)
-      : keys;
+    const paginatedKeys =
+      offset || limit
+        ? keys.slice(offset || 0, offset ? offset + (limit || keys.length) : limit)
+        : keys;
 
     // Get all notes in parallel
     const pipeline = this.client.multi();
     for (const key of paginatedKeys) {
       pipeline.json.get(key);
     }
-    
-    const notes = await pipeline.exec() as unknown as Note[];
-    
+
+    const notes = (await pipeline.exec()) as unknown as Note[];
+
     // Convert date strings to Date objects
-    return notes.map(note => ({
+    return notes.map((note) => ({
       ...note,
       createdAt: new Date(note.createdAt),
-      updatedAt: new Date(note.updatedAt)
+      updatedAt: new Date(note.updatedAt),
     }));
   }
 
@@ -150,7 +151,7 @@ export class NoteService {
     // In a real implementation, we would use Redis search capabilities
     // For now, we'll retrieve all notes and filter in memory
     const allNotes = await this.listNotes();
-    return allNotes.filter(note => note.tags.includes(tag));
+    return allNotes.filter((note) => note.tags.includes(tag));
   }
 
   /**
@@ -161,12 +162,10 @@ export class NoteService {
   async findLinkedNotes(noteId: string): Promise<Note[]> {
     // First verify that the source note exists
     await this.getNote(noteId);
-    
+
     // In a real implementation, we would use Redis graph capabilities
     // For now, we'll retrieve all notes and filter in memory
     const allNotes = await this.listNotes();
-    return allNotes.filter(note => 
-      note.links.some(link => link.targetId === noteId)
-    );
+    return allNotes.filter((note) => note.links.some((link) => link.targetId === noteId));
   }
 }

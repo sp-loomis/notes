@@ -19,6 +19,8 @@
       
       <div class="actions">
         <a href="/notes/<%= note.id %>/edit" class="button">Edit</a>
+        <a href="/notes/<%= note.id %>/link" class="button">Link Notes</a>
+        <a href="/notes/<%= note.id %>/graph" class="button">View Graph</a>
         <form action="/notes/<%= note.id %>/delete" method="POST" style="display: inline; margin: 0;">
           <button type="submit" class="danger">Delete</button>
         </form>
@@ -31,14 +33,21 @@
     <h3>Linked Notes</h3>
     
     <% if (note.links.length === 0) { %>
-      <p>No linked notes.</p>
+      <p>No linked notes. <a href="/notes/<%= note.id %>/link">Add a link</a>.</p>
     <% } else { %>
       <div class="card">
-        <ul>
+        <ul style="padding-left: 20px;">
           <% note.links.forEach(link => { %>
-            <li><a href="/notes/<%= link.targetId %>"><%= link.type %></a></li>
+            <li style="margin-bottom: 10px;">
+              <strong><%= link.type %>:</strong> 
+              <a href="/notes/<%= link.targetId %>">View linked note</a>
+              <form action="/notes/<%= note.id %>/unlink/<%= link.targetId %>" method="POST" style="display: inline; margin: 0;">
+                <button type="submit" class="danger" style="padding: 2px 5px; font-size: 12px;">Remove</button>
+              </form>
+            </li>
           <% }); %>
         </ul>
+        <a href="/notes/<%= note.id %>/link" class="button" style="margin-top: 10px;">Add More Links</a>
       </div>
     <% } %>
   </div>

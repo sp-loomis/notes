@@ -3,14 +3,17 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
+
 Graph-based note-taking app with Electron frontend and Redis backend. Notes contain HTML (Lexical), GeoJSON (Leaflet), and drawings (Excalidraw).
 
 ## Development Phases
+
 1. Redis graph database + CRUD library
-2. Component integration testing (Leaflet, Lexical, Excalidraw)
-3. Comprehensive frontend (viewing, linking, searching)
+2. Basic electron frontend (viewing, linking, searching)
+3. Adding in more complex components (Leaflet, Lexical, Excalidraw)
 
 ## Build/Test Commands
+
 - Run database tests: `npm test -- --scope=database`
 - Run frontend tests: `npm test -- --scope=frontend`
 - Run component tests: `npm test -- --scope=components`
@@ -20,6 +23,7 @@ Graph-based note-taking app with Electron frontend and Redis backend. Notes cont
 - Dev mode: `npm run dev`
 
 ## Code Style Guidelines
+
 - **Structure**: Monorepo with packages for database, frontend, components
 - **Language**: TypeScript throughout with strict typing
 - **Database**: Redis queries in dedicated service modules

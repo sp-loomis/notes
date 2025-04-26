@@ -42,9 +42,16 @@ This is a simple web interface to interact with the Redis graph database layer. 
   - View a list of all tags
   - Filter notes by tag
   - Delete tags
+  
+- **Link Management**
+  - Create links between notes with relationship types (related, reference, parent, child, etc.)
+  - View linked notes on note detail pages
+  - Remove links between notes
+  - View a note's connection graph (both incoming and outgoing links)
 
 - **Data Structures**
   - Notes contain title, content, tags, and links
   - Tags contain name, color, and description
+  - Links define relationships between notes
 
 This demo provides a simple way to verify the Redis graph database functionality before proceeding with the full application development.
