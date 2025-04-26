@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './store';
 import { fetchNotes } from './store/notesSlice';
 import { fetchTags } from './store/tagsSlice';
+import { setEditorMode } from './store/uiSlice';
 import GlobalStyles from './styles/globalStyles';
 import Layout from './components/Layout';
 import { NoteViewer, NoteForm, LinkForm } from './components/Notes';
 import { TagForm } from './components/Tags';
 
-type EditorMode = 'view' | 'edit' | 'create' | 'createTag' | 'editTag' | 'createLink';
-
 const App: React.FC = () => {
   const dispatch = useDispatch();
   const { currentNote } = useSelector((state: RootState) => state.notes);
   const { currentTag } = useSelector((state: RootState) => state.tags);
-  const { theme } = useSelector((state: RootState) => state.ui);
-  const [editorMode, setEditorMode] = useState<EditorMode>('view');
+  const { theme, editorMode } = useSelector((state: RootState) => state.ui);
   
   useEffect(() => {
     // Set theme on body element
@@ -32,7 +30,7 @@ const App: React.FC = () => {
         return currentNote ? (
           <NoteForm 
             noteId={currentNote.id} 
-            onCancel={() => setEditorMode('view')} 
+            onCancel={() => dispatch(setEditorMode('view'))} 
           />
         ) : (
           <NoteViewer />
@@ -41,14 +39,14 @@ const App: React.FC = () => {
       case 'create':
         return (
           <NoteForm 
-            onCancel={() => setEditorMode('view')} 
+            onCancel={() => dispatch(setEditorMode('view'))} 
           />
         );
         
       case 'createTag':
         return (
           <TagForm 
-            onCancel={() => setEditorMode('view')} 
+            onCancel={() => dispatch(setEditorMode('view'))} 
           />
         );
         
@@ -56,7 +54,7 @@ const App: React.FC = () => {
         return currentTag ? (
           <TagForm 
             tag={currentTag} 
-            onCancel={() => setEditorMode('view')} 
+            onCancel={() => dispatch(setEditorMode('view'))} 
           />
         ) : (
           <NoteViewer />
@@ -66,7 +64,7 @@ const App: React.FC = () => {
         return currentNote ? (
           <LinkForm 
             noteId={currentNote.id} 
-            onCancel={() => setEditorMode('view')} 
+            onCancel={() => dispatch(setEditorMode('view'))} 
           />
         ) : (
           <NoteViewer />

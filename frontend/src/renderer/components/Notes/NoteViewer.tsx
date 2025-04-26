@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import { updateNote, deleteNote, fetchLinkedNotes } from '../../store/notesSlice';
 import { fetchTags } from '../../store/tagsSlice';
+import { setEditorMode } from '../../store/uiSlice';
 import { VscEdit, VscTrash, VscLinkExternal, VscClose, VscChevronDown, VscChevronRight } from 'react-icons/vsc';
 import { formatDate } from '../../utils/dateUtils';
 
@@ -192,8 +193,7 @@ const NoteViewer: React.FC = () => {
   };
   
   const handleEditNote = () => {
-    // This will be implemented with the NoteForm component
-    console.log('Edit note');
+    dispatch(setEditorMode('edit'));
   };
   
   const handleDeleteClick = () => {
@@ -221,7 +221,7 @@ const NoteViewer: React.FC = () => {
       <EmptyState>
         <h2>No Note Selected</h2>
         <p>Select a note from the sidebar or create a new one</p>
-        <button onClick={() => console.log('Create note')}>Create New Note</button>
+        <button onClick={() => dispatch(setEditorMode('create'))}>Create New Note</button>
       </EmptyState>
     );
   }

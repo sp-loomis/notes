@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import { fetchNotes, setCurrentNote } from '../../store/notesSlice';
+import { setEditorMode } from '../../store/uiSlice';
 import { VscAdd, VscRefresh, VscError } from 'react-icons/vsc';
 import { formatDate } from '../../utils/dateUtils';
 
@@ -119,8 +120,7 @@ const NotesList: React.FC = () => {
   };
   
   const handleCreateNote = () => {
-    // This will be implemented in NoteForm.tsx
-    console.log('Create note');
+    dispatch(setEditorMode('create'));
   };
   
   const handleSelectNote = (note: Note) => {
