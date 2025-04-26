@@ -22,7 +22,7 @@ import {
   $isHeadingNode,
   HeadingTagType
 } from '@lexical/rich-text';
-import { $wrapLeafNodesInElements } from '@lexical/selection';
+import { $wrapNodes } from '@lexical/selection';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { 
   VscBold, 
@@ -30,10 +30,9 @@ import {
   VscListOrdered, 
   VscListUnordered, 
   VscCheckAll, 
-  VscLink, 
-  VscUndo, 
-  VscRedo,
+  VscLink,
 } from 'react-icons/vsc';
+import { IoMdUndo, IoMdRedo } from 'react-icons/io';
 
 const ToolbarContainer = styled.div`
   display: flex;
@@ -168,7 +167,7 @@ export function ToolbarPlugin(): JSX.Element {
     editor.update(() => {
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
-        $wrapLeafNodesInElements(selection, () => $createHeadingNode(tag));
+        $wrapNodes(selection, () => $createHeadingNode(tag));
       }
     });
   };
@@ -255,14 +254,14 @@ export function ToolbarPlugin(): JSX.Element {
         onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
         aria-label="Undo"
       >
-        <VscUndo />
+        <IoMdUndo />
       </button>
       
       <button
         onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
         aria-label="Redo"
       >
-        <VscRedo />
+        <IoMdRedo />
       </button>
     </ToolbarContainer>
   );
