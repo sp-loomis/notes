@@ -256,9 +256,10 @@ const NoteViewer: React.FC = () => {
           <div>Updated: {formatDate(currentNote.updatedAt)}</div>
         </NoteMeta>
         
-        <div>
-          {currentNote.content.plainText || 'No content'}
-        </div>
+        <div dangerouslySetInnerHTML={{ 
+          __html: currentNote.content.html || 
+                  (currentNote.content.plainText ? `<p>${currentNote.content.plainText}</p>` : 'No content') 
+        }} />
         
         {status !== 'loading' && (
           <LinkedNotesSection>

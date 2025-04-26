@@ -5,6 +5,7 @@ import { RootState } from '../../store';
 import { createNote, updateNote } from '../../store/notesSlice';
 import { fetchTags } from '../../store/tagsSlice';
 import { VscSave, VscClose, VscAdd, VscNewFile } from 'react-icons/vsc';
+import NoteEditor from './NoteEditor';
 
 interface NoteFormProps {
   noteId?: string; // If provided, we're editing an existing note
@@ -115,6 +116,12 @@ const ErrorMessage = styled.div`
   margin-top: 5px;
 `;
 
+const EditorContainer = styled.div`
+  margin-bottom: 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+`;
+
 const NoteForm: React.FC<NoteFormProps> = ({ noteId, onCancel }) => {
   const dispatch = useDispatch();
   const { notes, status, error } = useSelector((state: RootState) => state.notes);
@@ -125,7 +132,7 @@ const NoteForm: React.FC<NoteFormProps> = ({ noteId, onCancel }) => {
   
   // Form state
   const [title, setTitle] = useState(noteToEdit?.title || '');
-  const [content, setContent] = useState(noteToEdit?.content.plainText || '');
+  const [htmlContent, setHtmlContent] = useState(noteToEdit?.content.html || '');
   const [selectedTags, setSelectedTags] = useState<string[]>(noteToEdit?.tags || []);
   const [newTagName, setNewTagName] = useState('');
   const [formError, setFormError] = useState('');
@@ -142,13 +149,21 @@ const NoteForm: React.FC<NoteFormProps> = ({ noteId, onCancel }) => {
       return;
     }
     
+    // Extract plain text from the HTML for search functionality
+    const tempElement = document.createElement('div');
+    tempElement.innerHTML = htmlContent;
+    const plainText = tempElement.textContent || '';
+    
     if (noteToEdit) {
       // Update existing note
       dispatch(updateNote({
         id: noteToEdit.id,
         noteData: {
           title,
-          content: { plainText: content },
+          content: { 
+            html: htmlContent,
+            plainText 
+          },
           tags: selectedTags
         }
       }));
@@ -156,7 +171,10 @@ const NoteForm: React.FC<NoteFormProps> = ({ noteId, onCancel }) => {
       // Create new note
       dispatch(createNote({
         title,
-        content: { plainText: content },
+        content: { 
+          html: htmlContent,
+          plainText 
+        },
         tags: selectedTags,
         links: []
       }));
@@ -183,6 +201,10 @@ const NoteForm: React.FC<NoteFormProps> = ({ noteId, onCancel }) => {
     }
     
     setNewTagName('');
+  };
+  
+  const handleEditorChange = (html: string) => {
+    setHtmlContent(html);
   };
   
   return (
@@ -251,12 +273,13 @@ const NoteForm: React.FC<NoteFormProps> = ({ noteId, onCancel }) => {
           
           <FormGroup>
             <label htmlFor="content">Content</label>
-            <textarea
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Note content"
-            />
+            <EditorContainer>
+              <NoteEditor 
+                initialHtml={noteToEdit?.content.html || ''}
+                onChange={handleEditorChange}
+                placeholder="Enter note content..."
+              />
+            </EditorContainer>
           </FormGroup>
         </form>
       </FormContent>
