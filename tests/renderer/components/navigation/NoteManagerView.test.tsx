@@ -53,37 +53,13 @@ describe('NoteManagerView', () => {
     });
   });
 
-  test('renders empty state when no notes exist', () => {
+  test('renders empty state when no note is selected', () => {
     render(<NoteManagerView />);
 
     // Check that the empty state is rendered
     expect(screen.getByText('Note Manager')).toBeInTheDocument();
-    expect(screen.getByText('No Notes Yet')).toBeInTheDocument();
-    expect(screen.getByText('Create your first note to get started')).toBeInTheDocument();
-  });
-
-  test('renders note list when notes exist', () => {
-    // Mock notes data
-    const mockNotes = [
-      { id: 1, title: 'Note 1', createdAt: new Date(), updatedAt: new Date() },
-      { id: 2, title: 'Note 2', createdAt: new Date(), updatedAt: new Date() },
-    ];
-
-    (useNotes as jest.Mock).mockReturnValue({
-      notes: mockNotes,
-      selectedNote: null,
-      loading: false,
-      error: null,
-      selectNote: mockSelectNote,
-      createNote: mockCreateNote,
-      refreshNotes: mockRefreshNotes,
-    });
-
-    render(<NoteManagerView />);
-
-    // Check that note list is rendered
-    expect(screen.getByText('Note 1')).toBeInTheDocument();
-    expect(screen.getByText('Note 2')).toBeInTheDocument();
+    expect(screen.getByText('No Note Selected')).toBeInTheDocument();
+    expect(screen.getByText('Create a new note to get started')).toBeInTheDocument();
   });
 
   test('renders loading state', () => {
@@ -186,10 +162,10 @@ describe('NoteManagerView', () => {
     // Check that selected note view is displayed
     expect(screen.getByText('Selected Note')).toBeInTheDocument();
     expect(screen.getByText('Selected Note ID: 3')).toBeInTheDocument();
-    expect(screen.getByText('Back to Note List')).toBeInTheDocument();
+    expect(screen.getByLabelText('Close note')).toBeInTheDocument();
   });
 
-  test('returns to note list when back button is clicked', () => {
+  test('returns to no selected note state when close button is clicked', () => {
     // Mock selected note
     const mockSelectedNote = {
       id: 3,
@@ -210,9 +186,9 @@ describe('NoteManagerView', () => {
 
     render(<NoteManagerView />);
 
-    // Click the back button
-    const backButton = screen.getByText('Back to Note List');
-    fireEvent.click(backButton);
+    // Click the close button
+    const closeButton = screen.getByLabelText('Close note');
+    fireEvent.click(closeButton);
 
     // Verify selectNote was called with -1
     expect(mockSelectNote).toHaveBeenCalledWith(-1);
