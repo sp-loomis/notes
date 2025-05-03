@@ -155,6 +155,37 @@ These tests verify the functionality of the component repository, which manages 
   - Returns the most recent version for a component
   - Returns null when no versions exist
 
+## UI Component Tests
+
+The UI component tests verify the functionality of our React components, ensuring that they render correctly and handle user interactions as expected.
+
+### TabBar Component Tests (`renderer/components/layout/TabBar.test.tsx`)
+
+These tests verify the functionality of the TabBar component, which provides navigation between different views:
+
+- **Rendering**
+
+  - Successfully renders all tabs (Search Notes, Note Manager, Tag Organizer)
+  - Correctly applies the active class to the currently selected tab
+
+- **Interaction**
+  - Properly calls the onTabChange callback when a tab is clicked
+  - Passes the correct tab ID to the callback function
+
+### App Component Tests (`renderer/App.test.tsx`)
+
+These tests verify the main App component, which integrates the TabBar and navigation views:
+
+- **Rendering**
+
+  - Successfully renders the TabBar and navigator panel
+  - Shows the Search view by default when the app first loads
+
+- **Navigation**
+  - Properly switches views when different tabs are clicked
+  - Shows the Note Manager view when the Note Manager tab is clicked
+  - Shows the Tag Organizer view when the Tag Organizer tab is clicked
+
 ## Testing Approach
 
 ### Mocking Strategy
@@ -166,6 +197,14 @@ We use Jest's mocking capabilities to mock database interactions:
 - The `Date` constructor is mocked to provide consistent timestamps for testing
 - Repository methods are sometimes mocked to test their interactions
 
+### Test Setup for UI Components
+
+For testing UI components, we use:
+
+- `@testing-library/react` for rendering components and simulating user interactions
+- `@testing-library/jest-dom` for enhanced assertions about the DOM state
+- Custom mock implementations for third-party components like Allotment
+
 ### Test Coverage
 
 Test coverage is tracked using Jest's built-in coverage tool. As of the current implementation, we have:
@@ -174,6 +213,8 @@ Test coverage is tracked using Jest's built-in coverage tool. As of the current 
 - Strong testing of tag hierarchy functionality
 - Comprehensive testing of note-tag relationships
 - Areas for improvement in error handling coverage
+- Complete coverage of the TabBar component (100%)
+- Strong coverage of navigation functionality in the App component
 
 ## Future Test Expansion
 
@@ -185,6 +226,9 @@ Future tests will include:
 4. Search and filtering functionality tests
 5. Integration tests between repositories and UI
 6. End-to-end tests for complete workflows
+7. Navigation component tests (SearchView, NoteManagerView, TagOrganizerView)
+8. Note management UI tests
+9. Component viewing and editing tests
 
 ## Running Tests
 
@@ -192,6 +236,13 @@ To run the tests, use the following command:
 
 ```
 npm test
+```
+
+To run specific test categories:
+
+```
+npm test -- --testPathPattern=database  # Run only database tests
+npm test -- --testPathPattern=renderer  # Run only UI/renderer tests
 ```
 
 To run tests with coverage information:
