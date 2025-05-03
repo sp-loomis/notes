@@ -3,6 +3,7 @@ import Icon from '@mdi/react';
 import { mdiNotebook, mdiPlus, mdiRefresh, mdiAlert, mdiClose } from '@mdi/js';
 import { useNotes } from '../../contexts/NotesContext';
 import { useComponents } from '../../contexts/ComponentsContext';
+import NoteAttributesPanel from '../noteManager/NoteAttributesPanel';
 
 const NoteManagerView: React.FC = () => {
   const { notes, selectedNote, loading, error, selectNote, createNote, refreshNotes } = useNotes();
@@ -135,13 +136,16 @@ const NoteManagerView: React.FC = () => {
         </button>
       </div>
       <div className="navigator-content with-note">
-        {/* This is a placeholder for the selected note view */}
-        {/* Will be replaced with NoteAttributesPanel and ComponentListingPanel in future sprints */}
-        <div className="selected-note-placeholder">
-          <h3>{selectedNote.title}</h3>
-          <p>Selected Note ID: {selectedNote.id}</p>
-          <p>Created: {new Date(selectedNote.createdAt).toLocaleDateString()}</p>
-          <p>Updated: {new Date(selectedNote.updatedAt).toLocaleDateString()}</p>
+        <div className="note-manager-panels">
+          {/* Note Attributes Panel */}
+          <NoteAttributesPanel onClose={handleCloseNote} />
+
+          {/* Component Listing Panel will be added in Sprint 5.3 */}
+          <div className="component-listing-placeholder">
+            <h3>Component Listing</h3>
+            <p>Coming in Sprint 5.3</p>
+            <p>Components: {components.length}</p>
+          </div>
         </div>
       </div>
     </div>
