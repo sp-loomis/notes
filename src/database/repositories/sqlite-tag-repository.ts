@@ -300,4 +300,130 @@ export class SQLiteTagRepository implements TagRepository {
       );
     });
   }
+
+  /**
+   * Gets all descendant tags of a parent tag
+   * @param parentId Parent tag ID
+   * @returns Promise resolving to an array of all descendant tags
+   */
+  async getDescendantTags(parentId: number): Promise<Tag[]> {
+    return new Promise<Tag[]>((resolve, reject) => {
+      const sql = `
+        WITH RECURSIVE tag_tree AS (
+          -- Base case: direct children of the parent
+          SELECT id, name, color, parent_id, created_at, updated_at
+          FROM tags 
+          WHERE parent_id = ?
+          
+          UNION ALL
+          
+          -- Recursive case: all descendants
+          SELECT t.id, t.name, t.color, t.parent_id, t.created_at, t.updated_at
+          FROM tags t
+          JOIN tag_tree tt ON t.parent_id = tt.id
+        )
+        SELECT id, name, color, parent_id as parentId, created_at as createdAt, updated_at as updatedAt
+        FROM tag_tree
+        ORDER BY name`;
+
+      this.db.all(sql, [parentId], (err, rows: any[]) => {
+        if (err) {
+          reject(err);
+        } else {
+          const tags: Tag[] = rows.map((row) => ({
+            id: row.id,
+            name: row.name,
+            color: row.color,
+            parentId: row.parentId,
+            createdAt: new Date(row.createdAt),
+            updatedAt: new Date(row.updatedAt),
+          }));
+          resolve(tags);
+        }
+      });
+    });
+  }
+
+  /**
+   * Gets all ancestor tags of a child tag
+   * @param childId Child tag ID
+   * @returns Promise resolving to an array of all ancestor tags
+   */
+  async getAncestorTags(childId: number): Promise<Tag[]> {
+    return new Promise<Tag[]>((resolve, reject) => {
+      const sql = `
+        WITH RECURSIVE tag_tree AS (
+          -- Base case: parent of the child
+          SELECT t.id, t.name, t.color, t.parent_id, t.created_at, t.updated_at
+          FROM tags t
+          JOIN tags child ON t.id = child.parent_id
+          WHERE child.id = ?
+          
+          UNION ALL
+          
+          -- Recursive case: all ancestors
+          SELECT t.id, t.name, t.color, t.parent_id, t.created_at, t.updated_at
+          FROM tags t
+          JOIN tag_tree tt ON t.id = tt.parent_id
+        )
+        SELECT id, name, color, parent_id as parentId, created_at as createdAt, updated_at as updatedAt
+        FROM tag_tree
+        ORDER BY name`;
+
+      this.db.all(sql, [childId], (err, rows: any[]) => {
+        if (err) {
+          reject(err);
+        } else {
+          const tags: Tag[] = rows.map((row) => ({
+            id: row.id,
+            name: row.name,
+            color: row.color,
+            parentId: row.parentId,
+            createdAt: new Date(row.createdAt),
+            updatedAt: new Date(row.updatedAt),
+          }));
+          resolve(tags);
+        }
+      });
+    });
+  }
+
+  /**
+   * Gets notes that have the specified tag
+   * @param tagId Tag ID
+   * @returns Promise resolving to an array of note IDs
+   */
+  async getNotesWithTag(tagId: number): Promise<number[]> {
+    return new Promise<number[]>((resolve, reject) => {
+      this.db.all('SELECT note_id FROM note_tags WHERE tag_id = ?', [tagId], (err, rows: any[]) => {
+        if (err) {
+          reject(err);
+        } else {
+          const noteIds = rows.map((row) => row.note_id);
+          resolve(noteIds);
+        }
+      });
+    });
+  }
+
+  /**
+   * Moves a tag to a new parent
+   * @param tagId Tag ID to move
+   * @param newParentId New parent tag ID (null for root level)
+   * @returns Promise resolving to true if successful
+   */
+  async moveTag(tagId: number, newParentId: number | null): Promise<boolean> {
+    // First check if moving would create a cycle
+    if (newParentId !== null) {
+      // Get all descendants of the tag being moved
+      const descendants = await this.getDescendantTags(tagId);
+      // If new parent is among descendants, this would create a cycle
+      if (descendants.some((tag) => tag.id === newParentId)) {
+        throw new Error('Cannot move tag: would create a cycle in tag hierarchy');
+      }
+    }
+
+    // Perform the move
+    return this.updateTag(tagId, { parentId: newParentId });
+  }
 }

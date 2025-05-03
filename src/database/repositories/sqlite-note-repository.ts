@@ -143,4 +143,133 @@ export class SQLiteNoteRepository implements NoteRepository {
       );
     });
   }
+
+  /**
+   * Finds notes that have at least one of the specified tags or their descendants
+   * @param tagIds Array of tag IDs to filter by
+   * @returns Promise resolving to an array of matching notes
+   */
+  async findNotesByTags(tagIds: number[]): Promise<Note[]> {
+    return new Promise<Note[]>((resolve, reject) => {
+      if (!tagIds.length) {
+        resolve([]);
+        return;
+      }
+
+      const placeholders = tagIds.map(() => '?').join(',');
+      const sql = `
+        SELECT DISTINCT n.id, n.title, n.created_at as createdAt, n.updated_at as updatedAt 
+        FROM notes n
+        JOIN note_tags nt ON n.id = nt.note_id
+        WHERE nt.tag_id IN (${placeholders})
+        ORDER BY n.updated_at DESC`;
+
+      this.db.all(sql, tagIds, (err, rows: any[]) => {
+        if (err) {
+          reject(err);
+        } else {
+          const notes: Note[] = rows.map((row) => ({
+            id: row.id,
+            title: row.title,
+            createdAt: new Date(row.createdAt),
+            updatedAt: new Date(row.updatedAt),
+          }));
+          resolve(notes);
+        }
+      });
+    });
+  }
+
+  /**
+   * Finds notes that have all of the specified tags
+   * @param tagIds Array of tag IDs that notes must all have
+   * @returns Promise resolving to an array of matching notes
+   */
+  async findNotesByAllTags(tagIds: number[]): Promise<Note[]> {
+    return new Promise<Note[]>((resolve, reject) => {
+      if (!tagIds.length) {
+        // If no tags specified, return all notes
+        this.getAllNotes().then(resolve).catch(reject);
+        return;
+      }
+
+      const sql = `
+        SELECT n.id, n.title, n.created_at as createdAt, n.updated_at as updatedAt 
+        FROM notes n
+        WHERE (
+          SELECT COUNT(DISTINCT nt.tag_id) 
+          FROM note_tags nt 
+          WHERE nt.note_id = n.id AND nt.tag_id IN (${tagIds.map(() => '?').join(',')})
+        ) = ?
+        ORDER BY n.updated_at DESC`;
+
+      const params = [...tagIds, tagIds.length];
+
+      this.db.all(sql, params, (err, rows: any[]) => {
+        if (err) {
+          reject(err);
+        } else {
+          const notes: Note[] = rows.map((row) => ({
+            id: row.id,
+            title: row.title,
+            createdAt: new Date(row.createdAt),
+            updatedAt: new Date(row.updatedAt),
+          }));
+          resolve(notes);
+        }
+      });
+    });
+  }
+
+  /**
+   * Finds notes that have any of the specified tags or their descendants
+   * @param tagIds Array of tag IDs where notes must have at least one
+   * @param includeDescendants If true, also include notes with descendant tags
+   * @returns Promise resolving to an array of matching notes
+   */
+  async findNotesByAnyTags(tagIds: number[], includeDescendants = false): Promise<Note[]> {
+    return new Promise<Note[]>((resolve, reject) => {
+      if (!tagIds.length) {
+        resolve([]);
+        return;
+      }
+
+      if (!includeDescendants) {
+        // If not including descendants, just use the basic tag filter
+        this.findNotesByTags(tagIds).then(resolve).catch(reject);
+        return;
+      }
+
+      // This recursive query gets all descendant tags of the specified tags
+      const sql = `
+        WITH RECURSIVE tag_tree AS (
+          -- Base case: the specified tags
+          SELECT id, parent_id FROM tags WHERE id IN (${tagIds.map(() => '?').join(',')})
+          UNION ALL
+          -- Recursive case: all child tags
+          SELECT t.id, t.parent_id 
+          FROM tags t
+          JOIN tag_tree tt ON t.parent_id = tt.id
+        )
+        SELECT DISTINCT n.id, n.title, n.created_at as createdAt, n.updated_at as updatedAt 
+        FROM notes n
+        JOIN note_tags nt ON n.id = nt.note_id
+        JOIN tag_tree tt ON nt.tag_id = tt.id
+        ORDER BY n.updated_at DESC`;
+
+      this.db.all(sql, tagIds, (err, rows: any[]) => {
+        if (err) {
+          reject(err);
+        } else {
+          const notes: Note[] = rows.map((row) => ({
+            id: row.id,
+            title: row.title,
+            createdAt: new Date(row.createdAt),
+            updatedAt: new Date(row.updatedAt),
+          }));
+          resolve(notes);
+        }
+      });
+    });
+  }
 }
