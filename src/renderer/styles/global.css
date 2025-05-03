@@ -76,12 +76,19 @@ body,
   font-size: 18px;
   font-weight: 600;
   border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .navigator-content {
   flex: 1;
   overflow: auto;
   padding: 15px;
+}
+
+.navigator-content.with-note {
+  padding: 0;
 }
 
 /* Main content area */
@@ -114,4 +121,231 @@ body,
   margin: 0;
   color: #718096;
   font-size: 14px;
+}
+
+/* Note Manager View styles */
+.note-manager-view .create-note-button,
+.note-manager-view .close-note-button {
+  background-color: #4299e1;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.note-manager-view .create-note-button:hover,
+.note-manager-view .close-note-button:hover {
+  background-color: #3182ce;
+}
+
+.note-manager-view .close-note-button {
+  background-color: #a0aec0;
+}
+
+.note-manager-view .close-note-button:hover {
+  background-color: #718096;
+}
+
+.note-manager-view .note-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.note-manager-view .note-list-item {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.note-manager-view .note-list-item:hover {
+  background-color: #ebf8ff;
+  border-color: #bee3f8;
+}
+
+.note-manager-view .note-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.note-manager-view .note-dates {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: #718096;
+}
+
+.note-manager-view .note-creation-form {
+  background-color: white;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.note-manager-view .note-creation-form input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.note-manager-view .note-creation-form .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.note-manager-view .note-creation-form button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.note-manager-view .note-creation-form button.primary-button {
+  background-color: #4299e1;
+  color: white;
+  border-color: #4299e1;
+}
+
+.note-manager-view .note-creation-form button.primary-button:disabled {
+  background-color: #a0aec0;
+  border-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.note-manager-view .loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  color: #718096;
+}
+
+.note-manager-view .error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  color: #e53e3e;
+  text-align: center;
+  gap: 10px;
+}
+
+.note-manager-view .refresh-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.note-manager-view .selected-note-placeholder {
+  background-color: white;
+  border-radius: 6px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.note-manager-view .selected-note-placeholder h3 {
+  margin-top: 0;
+  color: #2d3748;
+}
+
+.note-manager-view .selected-note-placeholder p {
+  margin: 5px 0;
+  color: #4a5568;
+}
+
+.note-manager-view .secondary-button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  background-color: #edf2f7;
+  border: 1px solid #e2e8f0;
+  color: #4a5568;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.primary-button {
+  background-color: #4299e1;
+  color: white;
+  border: 1px solid #4299e1;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.primary-button:hover {
+  background-color: #3182ce;
+  border-color: #3182ce;
+}
+
+/* Search View Styles */
+.search-view .search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.search-view .search-placeholder-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #edf2f7;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #4a5568;
+  text-align: center;
+}
+
+.search-view .note-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.search-view .note-list-item {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-view .note-list-item:hover {
+  background-color: #ebf8ff;
+  border-color: #bee3f8;
+}
+
+.search-view .note-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.search-view .note-dates {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: #718096;
 }

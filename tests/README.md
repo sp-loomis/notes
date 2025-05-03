@@ -186,6 +186,37 @@ These tests verify the main App component, which integrates the TabBar and navig
   - Shows the Note Manager view when the Note Manager tab is clicked
   - Shows the Tag Organizer view when the Tag Organizer tab is clicked
 
+### NoteManagerView Component Tests (`renderer/components/navigation/NoteManagerView.test.tsx`)
+
+These tests verify the functionality of the NoteManagerView component, which displays the Note Manager interface:
+
+- **Empty State**
+
+  - Renders the "No Note Selected" message when no note is selected
+  - Displays a button to create a new note
+
+- **Loading State**
+
+  - Shows a loading indicator when data is being fetched
+
+- **Error State**
+
+  - Displays an error message when an error occurs
+  - Provides a retry button to attempt the operation again
+
+- **Note Creation**
+
+  - Displays a note creation form when the create button is clicked
+  - Successfully calls the createNote function with the correct data when the form is submitted
+  - Selects the newly created note after creation
+
+- **Selected Note View**
+  - Properly displays the selected note's details
+  - Shows a close button to return to the empty state
+  - Returns to the empty state when the close button is clicked
+
+These tests use Jest's mocking capabilities to mock the NotesContext and ComponentsContext, allowing us to test the component's behavior with different state configurations.
+
 ## Testing Approach
 
 ### Mocking Strategy
