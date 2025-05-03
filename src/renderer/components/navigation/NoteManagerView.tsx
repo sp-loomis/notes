@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '@mdi/react';
-import { mdiNotebook, mdiPlus, mdiRefresh, mdiAlert } from '@mdi/js';
+import { mdiNotebook, mdiPlus, mdiRefresh, mdiAlert, mdiClose } from '@mdi/js';
 import { useNotes } from '../../contexts/NotesContext';
 import { useComponents } from '../../contexts/ComponentsContext';
 
@@ -33,6 +33,11 @@ const NoteManagerView: React.FC = () => {
   const handleCreateFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     handleCreateNote();
+  };
+
+  // Handle closing the selected note
+  const handleCloseNote = () => {
+    selectNote(-1); // Deselect current note
   };
 
   // Render loading state
@@ -104,29 +109,12 @@ const NoteManagerView: React.FC = () => {
                 </div>
               </form>
             </div>
-          ) : notes.length > 0 ? (
-            // Note list
-            <div className="note-list">
-              {notes.map((note) => (
-                <div
-                  key={note.id}
-                  className="note-list-item"
-                  onClick={() => handleSelectNote(note.id)}
-                >
-                  <div className="note-title">{note.title}</div>
-                  <div className="note-dates">
-                    <span>Created: {new Date(note.createdAt).toLocaleDateString()}</span>
-                    <span>Updated: {new Date(note.updatedAt).toLocaleDateString()}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
           ) : (
-            // No notes placeholder
+            // No note selected placeholder
             <div className="placeholder">
               <Icon path={mdiNotebook} size={2} />
-              <h3>No Notes Yet</h3>
-              <p>Create your first note to get started</p>
+              <h3>No Note Selected</h3>
+              <p>Create a new note to get started</p>
               <button onClick={() => setIsCreating(true)} className="primary-button">
                 Create Note
               </button>
@@ -137,20 +125,13 @@ const NoteManagerView: React.FC = () => {
     );
   }
 
-  // Render selected note view (placeholder for now)
+  // Render selected note view
   return (
     <div className="navigator-view note-manager-view">
       <div className="navigator-header">
         Note Manager
-        <button
-          className="create-note-button"
-          onClick={() => {
-            selectNote(-1); // Deselect current note
-            setIsCreating(true);
-          }}
-          aria-label="Create new note"
-        >
-          <Icon path={mdiPlus} size={1} />
+        <button className="close-note-button" onClick={handleCloseNote} aria-label="Close note">
+          <Icon path={mdiClose} size={1} />
         </button>
       </div>
       <div className="navigator-content with-note">
@@ -161,12 +142,6 @@ const NoteManagerView: React.FC = () => {
           <p>Selected Note ID: {selectedNote.id}</p>
           <p>Created: {new Date(selectedNote.createdAt).toLocaleDateString()}</p>
           <p>Updated: {new Date(selectedNote.updatedAt).toLocaleDateString()}</p>
-          <button
-            onClick={() => selectNote(-1)} // Deselect current note
-            className="secondary-button"
-          >
-            Back to Note List
-          </button>
         </div>
       </div>
     </div>

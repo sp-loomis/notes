@@ -101,6 +101,7 @@ Split into two vertical panels:
    - Shows note title, dates, tags
    - Has Edit and Delete buttons
    - Edit mode allows changing title and tags
+   - Close button to return to "No Selected Note" state
 
 2. **Note Components Panel**
    - Lists components with name, type icon, last edit date

@@ -154,18 +154,20 @@ This document outlines the incremental development plan for building the Notes a
 
 **Tasks:**
 
-- Set up React Context for note state management
-- Create the UI skeleton for Note Manager View with empty and selected states
-- Create a state provider to manage currently selected note
-- Set up communication with the database layer
-- Implement note selection functionality
-- Create unit tests for state management
+- Set up React Context for note state management ✅
+- Create the UI skeleton for Note Manager View with empty and selected states ✅
+- Create a state provider to manage currently selected note ✅
+- Set up communication with the database layer ✅
+- Implement note selection functionality ✅
+- Create unit tests for state management ✅
+- Add close button to selected note view ✅
+- Create placeholder note listing in Search View ✅
 
 **Deliverables:**
 
-- React Context implementation for note state
-- Empty and selected state UI skeletons
-- Database communication layer
+- React Context implementation for note state ✅
+- Empty and selected state UI skeletons ✅
+- Database communication layer ✅
 
 #### Sprint 5.2: Note Attributes Panel
 

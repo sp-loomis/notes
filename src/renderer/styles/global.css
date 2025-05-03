@@ -124,7 +124,8 @@ body,
 }
 
 /* Note Manager View styles */
-.note-manager-view .create-note-button {
+.note-manager-view .create-note-button,
+.note-manager-view .close-note-button {
   background-color: #4299e1;
   color: white;
   width: 30px;
@@ -138,8 +139,17 @@ body,
   transition: background-color 0.2s;
 }
 
-.note-manager-view .create-note-button:hover {
+.note-manager-view .create-note-button:hover,
+.note-manager-view .close-note-button:hover {
   background-color: #3182ce;
+}
+
+.note-manager-view .close-note-button {
+  background-color: #a0aec0;
+}
+
+.note-manager-view .close-note-button:hover {
+  background-color: #718096;
 }
 
 .note-manager-view .note-list {
@@ -286,4 +296,56 @@ body,
 .primary-button:hover {
   background-color: #3182ce;
   border-color: #3182ce;
+}
+
+/* Search View Styles */
+.search-view .search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.search-view .search-placeholder-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #edf2f7;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #4a5568;
+  text-align: center;
+}
+
+.search-view .note-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.search-view .note-list-item {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-view .note-list-item:hover {
+  background-color: #ebf8ff;
+  border-color: #bee3f8;
+}
+
+.search-view .note-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.search-view .note-dates {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: #718096;
 }
