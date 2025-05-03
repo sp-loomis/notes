@@ -1,106 +1,156 @@
-# Notes Application database package requirements
+# Notes Application Database Specification
 
-The purpose of the database is to track notes. Each note may contain several component of various
-types (specified later), and notes may be organized by adding tags. Tags can be hierarchical,
-allowing one to search all child tags (and associated notes) using recursive queries.
+## Overview
 
-The database should be implemented with SQLite and the .db file should be stored in the top
-directory of this project. Interacting with the database will be through a typescript library which
-implements the CRUD operations described below.
+The database package manages notes, their components, and tags in a hierarchical organization system. It will be implemented using SQLite with a TypeScript interface layer providing CRUD operations.
 
-The package should be constructed with the philosophy that new note component types will be added
-over time, so it should be easy to add code related to these components to the package as this
-occurrs.
+## Design Principles
 
-## Schema
+- Use SQLite with the database file stored in the project root directory
+- Design for extensibility, allowing new component types to be added easily
+- Implement a clean TypeScript API that abstracts SQL operations
+- Support hierarchical tag structures with recursive querying
+- Version control for component content
 
-- Table: 'notes'
-  - column: note_id (int) (primary key)
-  - column: title (str)
-  - column: created_datetime (datetime)
-  - column: last_modified_datetime (datetime)
-- Table: 'tags'
-  - column: tag_id (int) (primary key)
-  - column: parent_tag_id (int)
-  - column: name (str)
-  - column: color (str, hex encoding)
-  - column: created_datetime (datetime)
-  - column: last_modified_datetime (datetime)
-- Table: 'note_tags'
-  - column: note_id (int)
-  - column: tag_id (int)
-  - column: created_datetime (datetime)
-- Table: 'note_components'
-  - column: component_id (int) (primary_key)
-  - column: note_id (int)
-  - column: name (str)
-  - column: type (str)
-  - column: created_datetime (datetime)
-- Table: 'component_versions'
-  - column: version_id (hash of other column values) (primary key)
-  - column: component_id (int)
-  - column: content (str)
-  - column: version_datetime (datetime)
+## Database Schema
 
-### Essential CRUD operations
+### Notes Table
 
-- Notes
-  - Create Note
-  - Update Note (Title)
-  - Search Notes by Filters
-  - Delete Note
-- Tags
-  - Create Tag
-  - Update Tag (Name, Parent)
-  - Get All Tags
-  - Get Child Tags of Tag
-  - Delete Tag
-- Notes & Tags
-  - Add Tag to Note
-  - Remove Tag from Note
-- Note Components
-  - Create Component
-  - Update Component (content)
-    - Updating components creates a new version rather than overwriting old content
-  - Delete Component
+| Column                 | Type     | Description                 |
+| ---------------------- | -------- | --------------------------- |
+| note_id                | INTEGER  | Primary key                 |
+| title                  | TEXT     | Note title                  |
+| created_datetime       | DATETIME | Creation timestamp          |
+| last_modified_datetime | DATETIME | Last modification timestamp |
 
-### Filters
+### Tags Table
 
-The search functionality of the app will potentially combine a number of filters. The package should
-therefore handle the creation & combining of the main filter types to dynamically create queries.
-The main filter type is tag filtering. In this case, for every tag passed, all notes must either
-have that tag or one of its descendants.
+| Column                 | Type     | Description                                      |
+| ---------------------- | -------- | ------------------------------------------------ |
+| tag_id                 | INTEGER  | Primary key                                      |
+| parent_tag_id          | INTEGER  | Reference to parent tag (nullable for root tags) |
+| name                   | TEXT     | Tag name                                         |
+| color                  | TEXT     | Hex color code (e.g., "#FF5733")                 |
+| created_datetime       | DATETIME | Creation timestamp                               |
+| last_modified_datetime | DATETIME | Last modification timestamp                      |
 
-Main content filter types:
+### Note Tags Table
 
-- Contains
-  - Applicable fields: Title, Markup component, Excalidraw component
-  - Checks that the string contains the given substring
-  - widget: text field
-- Like
-  - Applicable fields: Title, Markup component, Excalidraw component
-  - Checks that the string contains the given pattern
-  - widget: text field
-- After
-  - Applicable fields: Create datetime, Last modified datetime
-  - Checks that the relevant datetime is after the given one. Last modified should be _latest_ of
-    the note entry's last modified datetime and the latest last modified datetime of its
-    components.
-  - widget: datetime selector
-- Before
-  - Applicable fields: Create datetime, Last modified datetime
-  - Checks that the relevant datetime is before the given one. Last modified should be _latest_ of
-    the note entry's last modified datetime and the latest last modified datetime of its
-    components.
-  - widget: datetime selector
+| Column           | Type     | Description                |
+| ---------------- | -------- | -------------------------- |
+| note_id          | INTEGER  | Foreign key to notes table |
+| tag_id           | INTEGER  | Foreign key to tags table  |
+| created_datetime | DATETIME | When tag was added to note |
 
-## Note component types
+### Note Components Table
 
-- Markup
-  - Content format is a string with HTML code
-- Image
-  - Content format is byte-encoded string
-- GeoJSON
-  - Content format is a GeoJSON string
-- Excalidraw
-  - Content format is a .excalidraw json file as a string
+| Column           | Type     | Description                                         |
+| ---------------- | -------- | --------------------------------------------------- |
+| component_id     | INTEGER  | Primary key                                         |
+| note_id          | INTEGER  | Foreign key to notes table                          |
+| name             | TEXT     | Component name                                      |
+| type             | TEXT     | Component type (Markup, Image, GeoJSON, Excalidraw) |
+| created_datetime | DATETIME | Creation timestamp                                  |
+
+### Component Versions Table
+
+| Column           | Type     | Description                     |
+| ---------------- | -------- | ------------------------------- |
+| version_id       | TEXT     | Primary key (hash of values)    |
+| component_id     | INTEGER  | Foreign key to components table |
+| content          | TEXT     | Component content               |
+| version_datetime | DATETIME | Version timestamp               |
+
+## Core API Functions
+
+### Note Operations
+
+- `createNote(title: string): Promise<number>` - Create new note, returns note ID
+- `updateNote(noteId: number, title: string): Promise<boolean>` - Update note title
+- `getNote(noteId: number): Promise<Note>` - Get note by ID
+- `searchNotes(filters: Filter[]): Promise<Note[]>` - Search notes using filters
+- `deleteNote(noteId: number): Promise<boolean>` - Delete note and its components
+
+### Tag Operations
+
+- `createTag(name: string, color: string, parentTagId?: number): Promise<number>` - Create tag
+- `updateTag(tagId: number, data: {name?: string, color?: string, parentTagId?: number}): Promise<boolean>` - Update tag
+- `getAllTags(): Promise<Tag[]>` - Get all tags
+- `getChildTags(tagId: number): Promise<Tag[]>` - Get direct child tags
+- `getTagHierarchy(tagId?: number): Promise<TagTree>` - Get tag hierarchy from specified root
+- `deleteTag(tagId: number): Promise<boolean>` - Delete tag
+
+### Note-Tag Operations
+
+- `addTagToNote(noteId: number, tagId: number): Promise<boolean>` - Add tag to note
+- `removeTagFromNote(noteId: number, tagId: number): Promise<boolean>` - Remove tag from note
+- `getNoteTags(noteId: number): Promise<Tag[]>` - Get all tags for a note
+
+### Component Operations
+
+- `createComponent(noteId: number, name: string, type: string, initialContent: string): Promise<number>` - Create component
+- `updateComponentContent(componentId: number, content: string): Promise<string>` - Create new version
+- `getComponentVersions(componentId: number): Promise<ComponentVersion[]>` - Get all versions
+- `getComponentVersion(versionId: string): Promise<ComponentVersion>` - Get specific version
+- `getLatestComponentVersion(componentId: number): Promise<ComponentVersion>` - Get latest version
+- `deleteComponent(componentId: number): Promise<boolean>` - Delete component and versions
+
+## Filter System
+
+Filters can be combined to create complex queries for note searches.
+
+### Filter Types
+
+#### Tag Filter
+
+- Filter notes that have specific tags or any of their descendant tags
+- Combines hierarchically using recursive queries
+
+#### Content Filters
+
+1. **Contains Filter**
+
+   - Applicable to: Title, Markup component, Excalidraw component
+   - Checks if field contains a substring
+   - UI: Text input field
+
+2. **Like Filter**
+
+   - Applicable to: Title, Markup component, Excalidraw component
+   - Pattern matching using SQL LIKE syntax
+   - UI: Text input field
+
+3. **After Filter**
+
+   - Applicable to: Created datetime, Last modified datetime
+   - Checks if datetime is after specified date
+   - UI: Datetime selector
+   - For last modified, uses latest of note or component modification dates
+
+4. **Before Filter**
+   - Applicable to: Created datetime, Last modified datetime
+   - Checks if datetime is before specified date
+   - UI: Datetime selector
+   - For last modified, uses latest of note or component modification dates
+
+## Component Types
+
+### Markup Component
+
+- Content format: HTML string
+- Editor: Lexical
+
+### Image Component
+
+- Content format: Base64-encoded string
+- Viewer: Native image renderer
+
+### GeoJSON Component
+
+- Content format: GeoJSON string
+- Viewer/Editor: Leaflet
+
+### Excalidraw Component
+
+- Content format: Excalidraw JSON string
+- Viewer/Editor: Excalidraw React component

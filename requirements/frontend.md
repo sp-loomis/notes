@@ -1,125 +1,180 @@
-# Notes Application frontend interface requirements
+# Notes Application Frontend Specification
 
-The Notes application is to be an Electron app using a handful of React libraries to render an
-interactive interface for the Notes database.
+## Overview
 
-## React libraries
+The Notes application is an Electron-based desktop application with a React frontend providing an interface for managing notes, components, and tags.
 
-- For handling panels within the app, use the Allotment library (repository:
-  https://github.com/johnwalley/allotment)
-- For handling of tree views (mainly the tag view) use the react-sortable-tree library (repository:
-  https://github.com/frontend-collective/react-sortable-tree?tab=readme-ov-file) with the
-  react-sortable-tree-theme-file-explorer theme
-  (https://github.com/frontend-collective/react-sortable-tree-theme-file-explorer)
-- For icons, use the Material Design Icon library (@mdi/react, npm:
-  https://www.npmjs.com/package/@mdi/react)
-- For editing Markup note components, use Lexical editor (github:
-  https://github.com/facebook/lexical)
-- For viewing & editing Excalidraw, use Excalidraw react library (github:
-  https://github.com/excalidraw/excalidraw)
-- For viewing & editing GeoJSONs, use Leaflet library (Leaflet.js github:
-  https://github.com/Leaflet/Leaflet), (react library: https://www.npmjs.com/package/react-leaflet)
+## Technology Stack
 
-## Layout
+### Core Technologies
 
-The main layout of the app will work as follows:
+- **Electron**: Desktop application framework
+- **React**: UI component library
+- **TypeScript**: Typed JavaScript for development
 
-- A thin, vertical "tab bar" with icons that can be selected to change the view in the sidebar. The
-  tab bar is always visible even when the sidebar is closed. There are three main tabs: Search
-  Notes, Note Manager, and Tag Organizer.
-- A sidebar which can be resized but which can be snapped closed. This will provide the navigation
-  functionality, allowing searching & navigating both notes and tags as well as selecting note
-  components. This sidebar will henceforth be called the "navigator."
-- A main body which will be used to display note components when opened. This can be further
-  subdivided into panels dynamically depending on user options for how to open components and split
-  the views.
+### Required Libraries
 
-## Search Notes navigator view
+| Library                                 | Purpose               | Source                                                                                           |
+| --------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------ |
+| Allotment                               | Panel management      | [GitHub](https://github.com/johnwalley/allotment)                                                |
+| react-sortable-tree                     | Tree views for tags   | [GitHub](https://github.com/frontend-collective/react-sortable-tree)                             |
+| react-sortable-tree-theme-file-explorer | Theme for tree views  | [GitHub](https://github.com/frontend-collective/react-sortable-tree-theme-file-explorer)         |
+| @mdi/react                              | Material Design Icons | [npm](https://www.npmjs.com/package/@mdi/react)                                                  |
+| Lexical                                 | Rich text editor      | [GitHub](https://github.com/facebook/lexical)                                                    |
+| Excalidraw                              | Drawing component     | [GitHub](https://github.com/excalidraw/excalidraw)                                               |
+| Leaflet/react-leaflet                   | GeoJSON visualization | [GitHub](https://github.com/Leaflet/Leaflet), [npm](https://www.npmjs.com/package/react-leaflet) |
 
-When the navigator is in "Search Notes" mode, it is split vertically into two resizable panels:
-the Search panel and the Search Results panel. The Search panel itself can be in two states: Basic
-and Advanced, controlled by a collapsing button which expands/contracts between the two states when
-toggled. When in basic mode, previously entered filters are dropped.
+## Application Layout
 
-### Basic Search Panel
+The application follows a three-panel structure:
 
-The basic search panel includes a Tag multiselect box for searching and selecting tags.
+```
+┌───┬───────────────┬──────────────────────────┐
+│   │               │                          │
+│ T │               │                          │
+│ A │               │                          │
+│ B │   Navigator   │      Main Content        │
+│   │    Panel      │         Area             │
+│ B │               │                          │
+│ A │               │                          │
+│ R │               │                          │
+│   │               │                          │
+└───┴───────────────┴──────────────────────────┘
+```
 
-### Advanced Search Panel
+1. **Tab Bar**: Vertical icon bar for switching navigator views
+2. **Navigator Panel**: Resizable sidebar with 3 possible views
+3. **Main Content Area**: Displays note components, can be split into multiple panels
 
-In the advanced state, beneath the Tag multiselect there is a button for adding filters. Each filter
-shows as three widgets: drop-down for choosing the filter type (see options in database.md), a
-multiselect for choosing which content types the filter will be applied to (see valid options in
-database.md), and a widget based on the filter type for the filter pattern.
+## Tab Bar
 
-### Search Results Panel
+The vertical tab bar contains three main icon buttons:
 
-In the search results, a SQL query should be run on the notes database applying the filters.
-When there are no filters and no tags selected, all notes are shown. In the header of this panel
-there should be a button for sorting by create datetime and last modified datetime. Each note is
-shown with the title of the note and beneath it the first 3 tags, the create datetime and the last
-modified datetime. Clicking on the note opens the Note Manager navigator view with that note
-selected.
+- Search Notes: Switches navigator to search interface
+- Note Manager: Switches navigator to note management interface
+- Tag Organizer: Switches navigator to tag organization interface
 
-## Note Manager navigator view
+The tab bar remains visible even when the navigator is collapsed.
 
-In the note manager view, if no note is selected, we are in "No Selected Note" mode, and if a note
-is selected (this is a global state which can be reset by the search results panel), we are in the
-"Selected Note" mode. In "Selected Note" mode, the navigator is split vertically into two panels:
-Note Attributes and Note Components.
+## Navigator Panel Views
 
-### No Selected Note mode
+### 1. Search Notes View
 
-If there is no selected note, there is a button to create a note. When this is chosen, a new note is
-created and the new note becomes selected.
+This view is split into two vertical panels:
 
-### Note Attributes panel
+#### Search Panel
 
-In the Note Attributes panel, we see the note title, created & last edited dates, and the note tags.
-These are not editable by default, but in the panel header there are a "Edit" and "Delete" button.
-Delete deletes the node and its components from the database (and should have a confirmation
-prompt). Edit switches to edit mode, where the title and tags are editable as a text field and a
-multiselect respectively. In edit mode, the edit button is replaced with a save button.
+Can toggle between two states:
 
-### Note Components panel
+- **Basic**: Contains tag multiselect only
+- **Advanced**: Adds configurable filters with:
+  - Filter type dropdown (Contains, Like, After, Before)
+  - Content type multiselect
+  - Filter value input (text field or datetime picker)
 
-In the Note Components panel, we see a list of note components with name and last edit date
-displayed (and the component type displayed by an icon). Selecting on a component opens it,
-occupying the full body. Alternatively, the user may right-click on a component with several
-options:
+#### Search Results Panel
 
-- Open Left (splits the body with a new panel to the left showing the component)
-- Open Right (splits the body with a new panel to the right)
-- Open Above (splits the body with a new panel on top)
-- Open Below (splits the body with a new panel on the bottom)
-- Rename Component (Allows in-line editing of the component name)
-- Delete Component (deletes the component and all its versions after a confirmation box)
+- Displays notes matching search criteria
+- Includes sort controls (by creation or modification date)
+- Each note shows:
+  - Title
+  - First 3 tags
+  - Created date
+  - Last modified date
+- Clicking a note opens it in Note Manager view
 
-## Tag Organizer panel
+### 2. Note Manager View
 
-The tag organizer panel is the simplest. All tags are displayed using the sortable tree view. In the
-header there is a button to add tags. For each tag you should see an icon with the color and the
-name of the tag. Clicking this should create a new tag, visualized in the tree
-view in an "editable" state where the user can type the name. Upon hitting enter, the tag is saved
-to the database. The new tag is a child of whatever tag was selected when the add button was
-clicked. Clicking away from the tags in the panel should deselect the tag. Right-clicking on a tag
-gives the options:
+Has two possible states:
 
-- Add Child Tag (same as clicking on this tag and clicking the add button)
-- Rename Tag
-- Change Tag Color (opens a floating color picker to change the color)
-- Delete Tag (again, pops up a confirmation before deleting)
+#### No Selected Note
 
-## Main Body
+- Shows a button to create a new note
 
-As mentioned above, the main body will display Note Components, potentially divided into many
-subpanels depending on user choice. Each time a new note is selected, the body resets to empty; if a
-component is directly selected from the note manager, the body resets to one panel showing only that
-component.
+#### Selected Note
 
-Each component panel has a header with a close button and the name of the component (left-aligned) and, right-aligned,
-an Edit button next to a dropdown showing the versions by date. Whichever version is selected is
-that displayed in the component body. Clicking edit goes into edit mode, using whatever editor is
-appropriate for the component, and the edit button is replaced by a save button and the version
-selector disappears. Clicking the save
-button creates a new version with the current content and switches the view to that version.
+Split into two vertical panels:
+
+1. **Note Attributes Panel**
+
+   - Shows note title, dates, tags
+   - Has Edit and Delete buttons
+   - Edit mode allows changing title and tags
+
+2. **Note Components Panel**
+   - Lists components with name, type icon, last edit date
+   - Click to open in main area
+   - Right-click menu:
+     - Open Left/Right/Above/Below (for split views)
+     - Rename Component
+     - Delete Component
+
+### 3. Tag Organizer View
+
+- Displays tags in a sortable tree view
+- Shows tag color and name
+- Add button creates new tag
+- Right-click menu:
+  - Add Child Tag
+  - Rename Tag
+  - Change Tag Color (with color picker)
+  - Delete Tag (with confirmation)
+
+## Main Content Area
+
+- Displays note components
+- Can be subdivided into multiple panels
+- Reset when a new note is selected
+- Each component panel includes:
+  - Component name
+  - Close button
+  - Edit button
+  - Version selector dropdown
+  - Content appropriate to component type
+
+### Component Panel Modes
+
+#### View Mode
+
+- Displays component content based on type
+- Shows version selector dropdown
+- Edit button to switch to edit mode
+
+#### Edit Mode
+
+- Shows editor appropriate to component type (Lexical, Excalidraw, etc.)
+- Save button replaces edit button
+- Saving creates a new version
+
+### Panel Splitting
+
+Components can be opened in split views:
+
+- Left split
+- Right split
+- Top split
+- Bottom split
+
+Each newly opened component properly sizes within its panel.
+
+## Component Type Rendering
+
+### Markup Component
+
+- Uses Lexical editor
+- Displays formatted HTML
+
+### Image Component
+
+- Displays images with proper scaling
+- Provides basic image controls
+
+### GeoJSON Component
+
+- Uses Leaflet for map display
+- Provides map controls
+
+### Excalidraw Component
+
+- Integrates Excalidraw for drawing
+- Full drawing capabilities
