@@ -35,7 +35,7 @@ const App: React.FC = () => {
       {/* Main area with resizable panels */}
       <Allotment>
         {/* Navigator Panel */}
-        <Allotment.Pane preferredSize={300} minSize={200} maxSize={500}>
+        <Allotment.Pane preferredSize={300} minSize={200} maxSize={500} snap={true}>
           <div className="navigator-panel">{renderNavigatorView()}</div>
         </Allotment.Pane>
 
