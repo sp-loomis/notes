@@ -1,0 +1,117 @@
+/* Base styles */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+    'Helvetica Neue', sans-serif;
+}
+
+/* Application layout */
+.app-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Tab bar */
+.tab-bar {
+  width: 60px;
+  background-color: #2d3748;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.tab-bar-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 10px;
+  color: #cbd5e0;
+  background: transparent;
+  border: none;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.tab-bar-button:hover {
+  background-color: #4a5568;
+}
+
+.tab-bar-button.active {
+  background-color: #4299e1;
+  color: white;
+}
+
+/* Navigator panel */
+.navigator-panel {
+  flex: 0 0 300px;
+  min-width: 200px;
+  max-width: 500px;
+  background-color: #f7fafc;
+  border-right: 1px solid #e2e8f0;
+  overflow: auto;
+}
+
+.navigator-view {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.navigator-header {
+  padding: 15px;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.navigator-content {
+  flex: 1;
+  overflow: auto;
+  padding: 15px;
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  background-color: white;
+  overflow: auto;
+  padding: 20px;
+}
+
+/* Placeholder styles */
+.placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #a0aec0;
+  text-align: center;
+  padding: 20px;
+}
+
+.placeholder h3 {
+  margin: 15px 0 5px;
+  font-size: 18px;
+  color: #4a5568;
+}
+
+.placeholder p {
+  margin: 0;
+  color: #718096;
+  font-size: 14px;
+}
