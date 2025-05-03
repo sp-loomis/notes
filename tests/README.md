@@ -191,17 +191,21 @@ These tests verify the main App component, which integrates the TabBar and navig
 These tests verify the functionality of the NoteManagerView component, which displays the Note Manager interface:
 
 - **Empty State**
+
   - Renders the "No Note Selected" message when no note is selected
   - Displays a button to create a new note
 
 - **Loading State**
+
   - Shows a loading indicator when data is being fetched
 
 - **Error State**
+
   - Displays an error message when an error occurs
   - Provides a retry button to attempt the operation again
 
 - **Note Creation**
+
   - Displays a note creation form when the create button is clicked
   - Successfully calls the createNote function with the correct data when the form is submitted
   - Selects the newly created note after creation
