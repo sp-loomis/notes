@@ -75,4 +75,33 @@ export interface TagRepository {
    * @returns Promise resolving to an array of tags
    */
   getTagsForNote(noteId: number): Promise<Tag[]>;
+
+  /**
+   * Gets all descendant tags of a parent tag
+   * @param parentId Parent tag ID
+   * @returns Promise resolving to an array of all descendant tags
+   */
+  getDescendantTags(parentId: number): Promise<Tag[]>;
+
+  /**
+   * Gets all ancestor tags of a child tag
+   * @param childId Child tag ID
+   * @returns Promise resolving to an array of all ancestor tags
+   */
+  getAncestorTags(childId: number): Promise<Tag[]>;
+
+  /**
+   * Gets notes that have the specified tag
+   * @param tagId Tag ID
+   * @returns Promise resolving to an array of note IDs
+   */
+  getNotesWithTag(tagId: number): Promise<number[]>;
+
+  /**
+   * Moves a tag to a new parent
+   * @param tagId Tag ID to move
+   * @param newParentId New parent tag ID (null for root level)
+   * @returns Promise resolving to true if successful
+   */
+  moveTag(tagId: number, newParentId: number | null): Promise<boolean>;
 }

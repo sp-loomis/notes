@@ -38,4 +38,26 @@ export interface NoteRepository {
    * @returns Promise resolving to true if successful, false otherwise
    */
   deleteNote(id: number): Promise<boolean>;
+
+  /**
+   * Finds notes that have at least one of the specified tags or their descendants
+   * @param tagIds Array of tag IDs to filter by
+   * @returns Promise resolving to an array of matching notes
+   */
+  findNotesByTags(tagIds: number[]): Promise<Note[]>;
+
+  /**
+   * Finds notes that have all of the specified tags
+   * @param tagIds Array of tag IDs that notes must all have
+   * @returns Promise resolving to an array of matching notes
+   */
+  findNotesByAllTags(tagIds: number[]): Promise<Note[]>;
+
+  /**
+   * Finds notes that have any of the specified tags or their descendants
+   * @param tagIds Array of tag IDs where notes must have at least one
+   * @param includeDescendants If true, also include notes with descendant tags
+   * @returns Promise resolving to an array of matching notes
+   */
+  findNotesByAnyTags(tagIds: number[], includeDescendants?: boolean): Promise<Note[]>;
 }
