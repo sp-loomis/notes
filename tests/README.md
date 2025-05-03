@@ -105,6 +105,56 @@ These tests verify the relationship management between notes and tags:
   - **findNotesByAllTags**: Finds notes that have all of the specified tags
   - **findNotesByAnyTags**: Finds notes with any of the specified tags, with optional inclusion of descendant tags
 
+### Component Repository Tests (`database/component-repository.test.ts`)
+
+These tests verify the functionality of the component repository, which manages note components and their versioned content:
+
+- **createComponent**
+
+  - Successfully creates a component with a name, type, and note ID
+  - Properly handles errors when the database operation fails
+
+- **getComponentById**
+
+  - Returns the correct component when it exists in the database
+  - Returns null when a component with the specified ID does not exist
+
+- **getComponentsByNoteId**
+
+  - Returns all components for a specific note
+  - Returns an empty array when no components exist for a note
+
+- **updateComponent**
+
+  - Successfully updates a component with new data
+  - Returns false when updating a non-existent component
+  - Returns false when no update data is provided
+
+- **deleteComponent**
+
+  - Successfully deletes a component and its versions
+  - Returns false when deleting a non-existent component
+
+- **createComponentVersion**
+
+  - Successfully creates a new version for a component
+  - Generates a unique version ID based on content and timestamp
+  - Updates the component's last modified timestamp
+
+- **getComponentVersions**
+
+  - Returns all versions for a component in descending order by creation date
+  - Returns an empty array when no versions exist
+
+- **getComponentVersion**
+
+  - Returns the correct version when it exists in the database
+  - Returns null when a version with the specified ID does not exist
+
+- **getLatestComponentVersion**
+  - Returns the most recent version for a component
+  - Returns null when no versions exist
+
 ## Testing Approach
 
 ### Mocking Strategy

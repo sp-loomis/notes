@@ -91,23 +91,24 @@ This document outlines the incremental development plan for building the Notes a
 - Tag filtering methods (findNotesByTags, findNotesByAllTags, findNotesByAnyTags) ✅
 - Test suite for tag operations ✅
 
-### Phase 3: Note Components Basic Implementation (MVP 3) 🔄 TO BE STARTED
+### Phase 3: Note Components Basic Implementation (MVP 3) ✅ COMPLETED
 
-**Goal:** Implement the component system for notes
+**Goal:** Implement the component system for notes ✅
 
 **Features:**
 
-- Note component creation and management
-- Component versioning system
-- Basic markup component type
-- Component content storage and retrieval
+- Note component creation and management ✅
+- Component versioning system ✅
+- Generic content storage and retrieval ✅
 
 **Deliverables:**
 
-- Component model and repository
-- Version tracking system
-- Basic content storage
-- Tests for component operations
+- Component model and repository ✅
+- Version tracking system ✅
+- Basic content storage ✅
+- Tests for component operations ✅
+
+**Note:** Markup-specific functionality has been postponed to Phase 9 since both Lexical and TipTap (potential editors) use their own JSON formats rather than HTML directly. This allows for a cleaner separation between storage and UI layers.
 
 ### Phase 4: Basic UI - Navigation Structure (MVP 4)
 
