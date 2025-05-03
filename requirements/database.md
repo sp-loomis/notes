@@ -44,13 +44,13 @@ The database package manages notes, their components, and tags in a hierarchical
 
 ### Note Components Table
 
-| Column           | Type     | Description                                         |
-| ---------------- | -------- | --------------------------------------------------- |
-| component_id     | INTEGER  | Primary key                                         |
-| note_id          | INTEGER  | Foreign key to notes table                          |
-| name             | TEXT     | Component name                                      |
-| type             | TEXT     | Component type (Markup, Image, GeoJSON, Excalidraw) |
-| created_datetime | DATETIME | Creation timestamp                                  |
+| Column           | Type     | Description                                     |
+| ---------------- | -------- | ----------------------------------------------- |
+| component_id     | INTEGER  | Primary key                                     |
+| note_id          | INTEGER  | Foreign key to notes table                      |
+| name             | TEXT     | Component name                                  |
+| type             | TEXT     | Component type (Markup, Image, GeoJSON, TLDraw) |
+| created_datetime | DATETIME | Creation timestamp                              |
 
 ### Component Versions Table
 
@@ -110,13 +110,13 @@ Filters can be combined to create complex queries for note searches.
 
 1. **Contains Filter**
 
-   - Applicable to: Title, Markup component, Excalidraw component
+   - Applicable to: Title, Markup component, TLDraw component
    - Checks if field contains a substring
    - UI: Text input field
 
 2. **Like Filter**
 
-   - Applicable to: Title, Markup component, Excalidraw component
+   - Applicable to: Title, Markup component, TLDraw component
    - Pattern matching using SQL LIKE syntax
    - UI: Text input field
 
@@ -150,8 +150,8 @@ Filters can be combined to create complex queries for note searches.
 - Content format: GeoJSON string
 - Viewer/Editor: Leaflet
 
-### Excalidraw Component (Future Integration)
+### TLDraw Component
 
-- Content format: Excalidraw JSON string
-- Viewer/Editor: Excalidraw React component
-- Note: Will be integrated in a later phase due to compatibility issues with current React version
+- Content format: TLDraw JSON string (.tldr format)
+- Viewer/Editor: TLDraw React component
+- Note: Will be integrated in a later phase

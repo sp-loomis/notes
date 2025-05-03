@@ -216,7 +216,23 @@ This document outlines the incremental development plan for building the Notes a
 - Version selection UI
 - Save/edit workflow
 
-### Phase 10: Component Types - GeoJSON (MVP 10)
+### Phase 10: Component Types - TLDraw Integration (MVP 10)
+
+**Goal:** Implement TLDraw component type for drawings
+
+**Features:**
+
+- TLDraw integration for drawing components
+- Component specific editing
+- Version comparison
+
+**Deliverables:**
+
+- TLDraw integration
+- Drawing component handlers
+- Version management for drawings
+
+### Phase 11: Component Types - GeoJSON (MVP 11)
 
 **Goal:** Implement GeoJSON component type
 
@@ -232,7 +248,7 @@ This document outlines the incremental development plan for building the Notes a
 - Component type handlers
 - Enhanced version management
 
-### Phase 11: Multi-panel Component Viewing (MVP 11)
+### Phase 12: Multi-panel Component Viewing (MVP 12)
 
 **Goal:** Implement split view functionality for components
 
@@ -250,23 +266,7 @@ This document outlines the incremental development plan for building the Notes a
 - Context menu for splitting options
 - Layout state management
 
-### Phase 12: Excalidraw Integration (New Phase)
-
-**Goal:** Implement Excalidraw component type once compatibility issues are resolved
-
-**Features:**
-
-- Excalidraw integration for drawing components
-- Component specific editing
-- Version comparison
-
-**Deliverables:**
-
-- Excalidraw integration
-- Drawing component handlers
-- Version management for drawings
-
-### Phase 13: Finalization and Polish (MVP 12)
+### Phase 13: Finalization and Polish (MVP 13)
 
 **Goal:** Finalize the application with performance improvements and polish
 
