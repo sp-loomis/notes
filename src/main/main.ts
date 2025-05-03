@@ -1,12 +1,13 @@
-import { app, BrowserWindow } from "electron";
-import * as path from "path";
-import * as isDev from "electron-is-dev";
-import { initializeDatabase } from "../database";
+import { app, BrowserWindow } from 'electron';
+import * as path from 'path';
+import * as isDev from 'electron-is-dev';
+// Re-enable database import since we're now using a mock implementation
+import { initializeDatabase } from '../database';
 
 let mainWindow: BrowserWindow | null = null;
 
 async function createWindow() {
-  // Initialize database
+  // Initialize database (now using mock implementation)
   await initializeDatabase();
 
   // Create the browser window
@@ -16,14 +17,21 @@ async function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      preload: path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, 'preload.js'),
     },
   });
 
+  // Log application paths for debugging
+  console.log('Application paths:');
+  console.log('__dirname:', __dirname);
+  console.log('User data path:', app.getPath('userData'));
+  console.log('App path:', app.getAppPath());
+  console.log('Executable path:', process.execPath);
+
   // Load the app
   const startUrl = isDev
-    ? "http://localhost:3000" // Dev server URL
-    : `file://${path.join(__dirname, "../renderer/index.html")}`; // Production build
+    ? `file://${path.join(__dirname, 'renderer/index.html')}` // Local build in dev mode
+    : `file://${path.join(__dirname, 'renderer/index.html')}`; // Production build
 
   mainWindow.loadURL(startUrl);
 
@@ -33,7 +41,7 @@ async function createWindow() {
   }
 
   // Dereference the window object when closed
-  mainWindow.on("closed", () => {
+  mainWindow.on('closed', () => {
     mainWindow = null;
   });
 }
@@ -42,14 +50,14 @@ async function createWindow() {
 app.whenReady().then(createWindow);
 
 // Quit when all windows are closed, except on macOS
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
 // On macOS, re-create window when dock icon is clicked and no other windows open
-app.on("activate", () => {
+app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
   }

@@ -1,25 +1,30 @@
-import db from './connection';
-import { migrateDatabase } from './migrations/initial';
-import { SQLiteNoteRepository } from './repositories/sqlite-note-repository';
-import { SQLiteTagRepository } from './repositories/sqlite-tag-repository';
-import { NoteRepository } from './repositories/note-repository';
-import { TagRepository } from './repositories/tag-repository';
+// This is a temporary stub for the database module
+// It will be replaced with the actual implementation once we're ready
+// to re-enable database functionality
 
-// Create repository instances
-export const noteRepository: NoteRepository = new SQLiteNoteRepository(db);
-export const tagRepository: TagRepository = new SQLiteTagRepository(db);
+// Mock repositories for UI development
+export const noteRepository = {
+  getAllNotes: () => Promise.resolve([]),
+  getNoteById: () => Promise.resolve(null),
+  searchNotes: () => Promise.resolve([]),
+  createNote: () => Promise.resolve(1),
+  updateNote: () => Promise.resolve(true),
+  deleteNote: () => Promise.resolve(true),
+};
 
-// Initialize the database
+export const tagRepository = {
+  getAllTags: () => Promise.resolve([]),
+  getTagById: () => Promise.resolve(null),
+  getTagHierarchy: () => Promise.resolve([]),
+  createTag: () => Promise.resolve(1),
+  updateTag: () => Promise.resolve(true),
+  deleteTag: () => Promise.resolve(true),
+};
+
+// Mock database initialization
 export async function initializeDatabase(): Promise<void> {
-  try {
-    // Run migrations
-    await migrateDatabase();
-
-    console.log('Database initialized successfully');
-  } catch (error) {
-    console.error('Failed to initialize database:', error);
-  }
+  console.log('Mock database initialized for UI development');
+  return Promise.resolve();
 }
 
-// Export database connection
-export default db;
+export default {};
