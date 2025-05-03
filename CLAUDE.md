@@ -19,7 +19,7 @@ When you're done making a bunch of changes, run git add and git commit to preser
 
 ## Build/Test Commands
 
-- Run database tests: `npm test -- --scope=database`
+- Run database tests: `npm test /-- --scope=database`
 - Run frontend tests: `npm test -- --scope=frontend`
 - Run component tests: `npm test -- --scope=components`
 - Run single test: `npm test -- -t "test name"`
