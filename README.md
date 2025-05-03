@@ -1,75 +1,89 @@
-# Notes App
+# Notes Application
 
-A graph-based note-taking application with Electron frontend and Redis backend. Notes can contain HTML (Lexical), GeoJSON (Leaflet), and drawings (Excalidraw).
+A desktop note-taking application built with Electron and React. This application allows for hierarchical organization of notes with tags, and supports various component types including rich text (Lexical), maps (GeoJSON/Leaflet), and drawings (Excalidraw).
 
-## Project Structure
+## Features
 
-This is a monorepo containing:
+- Hierarchical tag organization
+- Rich text editing with Lexical
+- Map components with Leaflet
+- Drawing components with Excalidraw
+- Component versioning
+- Advanced search and filtering capabilities
 
-- **database**: Redis graph database and CRUD library
-- **frontend**: Electron application with React UI
-- **components**: (Future) Reusable components for Lexical, Leaflet, and Excalidraw integration
-
-## Development Status
-
-### Phase 1: ✅ Complete
-- Redis graph database implementation
-- CRUD operations for notes and tags
-- Link relationships between notes
-- Testing infrastructure
-
-### Phase 2: 🔄 In Progress
-- Basic Electron frontend
-- VS Code-like UI
-- Note, tag, and link management
-- Search functionality
-
-### Phase 3: 📅 Planned
-- Integration of Lexical for rich text editing
-- Integration of Leaflet for maps/GeoJSON
-- Integration of Excalidraw for drawings
-- Comprehensive UI improvements
-
-## Getting Started
+## Development Setup
 
 ### Prerequisites
 
 - Node.js (v16+)
-- Redis server
+- npm (v7+)
 
-### Database
+### Installation
 
-```bash
-cd database
-npm install
-npm test
+1. Clone the repository
+
+   ```
+   git clone <repository-url>
+   cd notes
+   ```
+
+2. Install dependencies
+
+   ```
+   npm install
+   ```
+
+3. Build the application
+
+   ```
+   npm run build
+   ```
+
+4. Start the development server
+   ```
+   npm run dev
+   ```
+
+### Project Structure
+
+```
+notes/
+├── dist/                  # Compiled output
+├── requirements/          # Project requirements
+├── src/
+│   ├── database/          # Database layer
+│   │   ├── migrations/    # Database migrations
+│   │   └── models/        # Database models
+│   ├── main/              # Electron main process
+│   └── renderer/          # React frontend
+│       ├── components/    # React components
+│       ├── pages/         # Page components
+│       └── styles/        # CSS styles
+└── tests/                 # Unit and integration tests
 ```
 
-Also check out the demo web UI for the database:
+### Available Scripts
 
-```bash
-cd database/demo
-npm install
-npm start
-```
+- `npm run dev` - Start the development server with hot reload
+- `npm run build` - Build the application for production
+- `npm test` - Run tests
+- `npm run lint` - Run linting checks
+- `npm run format` - Format code with Prettier
+- `npm run package` - Package the application for distribution
 
-### Frontend
+## Database Schema
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+The application uses SQLite to store:
 
-## Features
+- Notes with title and metadata
+- Tags with hierarchical relationships
+- Note components of various types
+- Component versions
 
-- Create, edit, and delete notes
-- Add tags to notes for organization
-- Create links between notes with different relationship types
-- Search through notes and tags
-- View connected notes as a graph
-- Dark and light themes
+## Contributing
 
-## License
-
-MIT
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/xyz`)
+3. Commit your changes (`git commit -m 'Add xyz feature'`)
+4. Push to the branch (`git push origin feature/xyz`)
+5. Open a Pull Request

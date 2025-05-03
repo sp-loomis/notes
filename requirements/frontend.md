@@ -14,15 +14,15 @@ The Notes application is an Electron-based desktop application with a React fron
 
 ### Required Libraries
 
-| Library                                 | Purpose               | Source                                                                                           |
-| --------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------ |
-| Allotment                               | Panel management      | [GitHub](https://github.com/johnwalley/allotment)                                                |
-| react-sortable-tree                     | Tree views for tags   | [GitHub](https://github.com/frontend-collective/react-sortable-tree)                             |
-| react-sortable-tree-theme-file-explorer | Theme for tree views  | [GitHub](https://github.com/frontend-collective/react-sortable-tree-theme-file-explorer)         |
-| @mdi/react                              | Material Design Icons | [npm](https://www.npmjs.com/package/@mdi/react)                                                  |
-| Lexical                                 | Rich text editor      | [GitHub](https://github.com/facebook/lexical)                                                    |
-| Excalidraw                              | Drawing component     | [GitHub](https://github.com/excalidraw/excalidraw)                                               |
-| Leaflet/react-leaflet                   | GeoJSON visualization | [GitHub](https://github.com/Leaflet/Leaflet), [npm](https://www.npmjs.com/package/react-leaflet) |
+| Library                   | Purpose               | Source                                                                                           |
+| ------------------------- | --------------------- | ------------------------------------------------------------------------------------------------ |
+| Allotment                 | Panel management      | [GitHub](https://github.com/johnwalley/allotment)                                                |
+| react-accessible-treeview | Tree views for tags   | [npm](https://www.npmjs.com/package/react-accessible-treeview)                                   |
+| @mdi/react                | Material Design Icons | [npm](https://www.npmjs.com/package/@mdi/react)                                                  |
+| Lexical                   | Rich text editor      | [GitHub](https://github.com/facebook/lexical)                                                    |
+| Leaflet/react-leaflet     | GeoJSON visualization | [GitHub](https://github.com/Leaflet/Leaflet), [npm](https://www.npmjs.com/package/react-leaflet) |
+
+> **Note:** Drawing component with Excalidraw will be integrated in a later phase due to compatibility issues with the current React version.
 
 ## Application Layout
 

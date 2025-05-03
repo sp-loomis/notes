@@ -150,7 +150,8 @@ Filters can be combined to create complex queries for note searches.
 - Content format: GeoJSON string
 - Viewer/Editor: Leaflet
 
-### Excalidraw Component
+### Excalidraw Component (Future Integration)
 
 - Content format: Excalidraw JSON string
 - Viewer/Editor: Excalidraw React component
+- Note: Will be integrated in a later phase due to compatibility issues with current React version

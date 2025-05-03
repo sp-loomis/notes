@@ -186,7 +186,7 @@ This document outlines the incremental development plan for building the Notes a
 
 **Features:**
 
-- Tag tree view using react-sortable-tree
+- Tag tree view using react-accessible-treeview
 - Tag creation, editing, and deletion
 - Tag color management
 - Drag-and-drop organization
@@ -216,21 +216,19 @@ This document outlines the incremental development plan for building the Notes a
 - Version selection UI
 - Save/edit workflow
 
-### Phase 10: Component Types - GeoJSON and Excalidraw (MVP 10)
+### Phase 10: Component Types - GeoJSON (MVP 10)
 
-**Goal:** Implement GeoJSON and Excalidraw component types
+**Goal:** Implement GeoJSON component type
 
 **Features:**
 
 - Leaflet integration for GeoJSON components
-- Excalidraw integration
 - Component specific editing
 - Version comparison
 
 **Deliverables:**
 
 - GeoJSON viewer/editor
-- Excalidraw integration
 - Component type handlers
 - Enhanced version management
 
@@ -252,7 +250,23 @@ This document outlines the incremental development plan for building the Notes a
 - Context menu for splitting options
 - Layout state management
 
-### Phase 12: Finalization and Polish (MVP 12)
+### Phase 12: Excalidraw Integration (New Phase)
+
+**Goal:** Implement Excalidraw component type once compatibility issues are resolved
+
+**Features:**
+
+- Excalidraw integration for drawing components
+- Component specific editing
+- Version comparison
+
+**Deliverables:**
+
+- Excalidraw integration
+- Drawing component handlers
+- Version management for drawings
+
+### Phase 13: Finalization and Polish (MVP 12)
 
 **Goal:** Finalize the application with performance improvements and polish
 
