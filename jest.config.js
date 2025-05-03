@@ -1,8 +1,11 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
+  setupFilesAfterEnv: ['<rootDir>/tests/setupTests.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    // Mock CSS imports
+    '\\.(css|less|scss|sass)$': '<rootDir>/tests/__mocks__/styleMock.js',
   },
   transform: {
     '^.+\\.tsx?$': [
