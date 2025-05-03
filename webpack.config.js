@@ -1,20 +1,21 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+// Import path and HtmlWebpackPlugin modules
+import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 module.exports = [
   // Main process configuration
   {
-    mode: process.env.NODE_ENV || "development",
-    entry: "./src/main/main.ts",
-    target: "electron-main",
+    mode: process.env.NODE_ENV || 'development',
+    entry: './src/main/main.ts',
+    target: 'electron-main',
     output: {
-      path: path.resolve(__dirname, "dist"),
-      filename: "main.js",
+      path: path.resolve(__dirname, 'dist'),
+      filename: 'main.js',
     },
     resolve: {
-      extensions: [".ts", ".js"],
+      extensions: ['.ts', '.js'],
       alias: {
-        "@": path.resolve(__dirname, "src"),
+        '@': path.resolve(__dirname, 'src'),
       },
     },
     module: {
@@ -22,7 +23,7 @@ module.exports = [
         {
           test: /\.ts$/,
           include: /src/,
-          use: [{ loader: "ts-loader" }],
+          use: [{ loader: 'ts-loader' }],
         },
       ],
     },
@@ -32,17 +33,17 @@ module.exports = [
   },
   // Preload process configuration
   {
-    mode: process.env.NODE_ENV || "development",
-    entry: "./src/main/preload.ts",
-    target: "electron-preload",
+    mode: process.env.NODE_ENV || 'development',
+    entry: './src/main/preload.ts',
+    target: 'electron-preload',
     output: {
-      path: path.resolve(__dirname, "dist"),
-      filename: "preload.js",
+      path: path.resolve(__dirname, 'dist'),
+      filename: 'preload.js',
     },
     resolve: {
-      extensions: [".ts", ".js"],
+      extensions: ['.ts', '.js'],
       alias: {
-        "@": path.resolve(__dirname, "src"),
+        '@': path.resolve(__dirname, 'src'),
       },
     },
     module: {
@@ -50,24 +51,24 @@ module.exports = [
         {
           test: /\.ts$/,
           include: /src/,
-          use: [{ loader: "ts-loader" }],
+          use: [{ loader: 'ts-loader' }],
         },
       ],
     },
   },
   // Renderer process configuration
   {
-    mode: process.env.NODE_ENV || "development",
-    entry: "./src/renderer/index.tsx",
-    target: "electron-renderer",
+    mode: process.env.NODE_ENV || 'development',
+    entry: './src/renderer/index.tsx',
+    target: 'electron-renderer',
     output: {
-      path: path.resolve(__dirname, "dist/renderer"),
-      filename: "index.js",
+      path: path.resolve(__dirname, 'dist/renderer'),
+      filename: 'index.js',
     },
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx"],
+      extensions: ['.ts', '.tsx', '.js', '.jsx'],
       alias: {
-        "@": path.resolve(__dirname, "src"),
+        '@': path.resolve(__dirname, 'src'),
       },
     },
     module: {
@@ -75,21 +76,21 @@ module.exports = [
         {
           test: /\.tsx?$/,
           include: /src/,
-          use: [{ loader: "ts-loader" }],
+          use: [{ loader: 'ts-loader' }],
         },
         {
           test: /\.css$/,
-          use: ["style-loader", "css-loader"],
+          use: ['style-loader', 'css-loader'],
         },
         {
           test: /\.(png|jpe?g|gif|svg)$/i,
-          type: "asset/resource",
+          type: 'asset/resource',
         },
       ],
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, "src/renderer/index.html"),
+        template: path.resolve(__dirname, 'src/renderer/index.html'),
       }),
     ],
   },

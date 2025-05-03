@@ -1,6 +1,15 @@
 import db from '../connection';
 
 /**
+ * Define a type for SQLite master table query results
+ */
+interface SqliteMaster {
+  name: string;
+  type: string;
+  [key: string]: string | number; // More specific than 'any'
+}
+
+/**
  * Helper function to run SQL as a Promise
  */
 function runSql(sql: string): Promise<void> {
@@ -18,13 +27,14 @@ function runSql(sql: string): Promise<void> {
 /**
  * Helper function to query SQL as a Promise
  */
-function querySql(sql: string): Promise<any> {
+function querySql(sql: string): Promise<SqliteMaster | undefined> {
   return new Promise((resolve, reject) => {
     db.get(sql, (err, row) => {
       if (err) {
         reject(err);
       } else {
-        resolve(row);
+        // Type assertion since we know the structure of sqlite_master
+        resolve(row as SqliteMaster | undefined);
       }
     });
   });
