@@ -22,9 +22,9 @@ describe('SQLiteNoteRepository', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     repository = new SQLiteNoteRepository(mockDb);
-    
-    // Mock Date.now to return a consistent date for testing
-    jest.spyOn(global, 'Date').mockImplementation(() => dateNow as unknown as string);
+
+    // Mock Date constructor to return a consistent date for testing
+    jest.spyOn(global, 'Date').mockImplementation(() => dateNow as unknown as Date);
   });
 
   afterEach(() => {
@@ -45,7 +45,7 @@ describe('SQLiteNoteRepository', () => {
       );
 
       const result = await repository.createNote(noteData);
-      
+
       expect(mockDb.run).toHaveBeenCalledWith(
         'INSERT INTO notes (title, created_at, updated_at) VALUES (?, ?, ?)',
         [noteData.title, dateNow.toISOString(), dateNow.toISOString()],
@@ -85,7 +85,7 @@ describe('SQLiteNoteRepository', () => {
       );
 
       const result = await repository.getNoteById(1);
-      
+
       expect(mockDb.get).toHaveBeenCalledWith(
         'SELECT id, title, created_at as createdAt, updated_at as updatedAt FROM notes WHERE id = ?',
         [1],
@@ -103,7 +103,7 @@ describe('SQLiteNoteRepository', () => {
       );
 
       const result = await repository.getNoteById(999);
-      
+
       expect(result).toBeNull();
     });
 

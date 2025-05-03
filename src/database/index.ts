@@ -14,7 +14,7 @@ export async function initializeDatabase(): Promise<void> {
   try {
     // Run migrations
     await migrateDatabase();
-    
+
     console.log('Database initialized successfully');
   } catch (error) {
     console.error('Failed to initialize database:', error);

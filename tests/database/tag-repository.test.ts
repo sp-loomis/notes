@@ -24,9 +24,9 @@ describe('SQLiteTagRepository', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     repository = new SQLiteTagRepository(mockDb);
-    
-    // Mock Date.now to return a consistent date for testing
-    jest.spyOn(global, 'Date').mockImplementation(() => dateNow as unknown as string);
+
+    // Mock Date constructor to return a consistent date for testing
+    jest.spyOn(global, 'Date').mockImplementation(() => dateNow as unknown as Date);
   });
 
   afterEach(() => {
@@ -48,7 +48,7 @@ describe('SQLiteTagRepository', () => {
       );
 
       const result = await repository.createTag(tagData);
-      
+
       expect(mockDb.run).toHaveBeenCalledWith(
         'INSERT INTO tags (name, color, parent_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
         [tagData.name, tagData.color, null, dateNow.toISOString(), dateNow.toISOString()],
@@ -72,10 +72,16 @@ describe('SQLiteTagRepository', () => {
       );
 
       const result = await repository.createTag(tagData);
-      
+
       expect(mockDb.run).toHaveBeenCalledWith(
         'INSERT INTO tags (name, color, parent_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
-        [tagData.name, tagData.color, tagData.parentId, dateNow.toISOString(), dateNow.toISOString()],
+        [
+          tagData.name,
+          tagData.color,
+          tagData.parentId,
+          dateNow.toISOString(),
+          dateNow.toISOString(),
+        ],
         expect.any(Function)
       );
       expect(result).toBe(2);
@@ -115,7 +121,7 @@ describe('SQLiteTagRepository', () => {
       );
 
       const result = await repository.getTagById(1);
-      
+
       expect(mockDb.get).toHaveBeenCalledWith(
         'SELECT id, name, color, parent_id as parentId, created_at as createdAt, updated_at as updatedAt FROM tags WHERE id = ?',
         [1],
@@ -133,7 +139,7 @@ describe('SQLiteTagRepository', () => {
       );
 
       const result = await repository.getTagById(999);
-      
+
       expect(result).toBeNull();
     });
   });
@@ -174,12 +180,12 @@ describe('SQLiteTagRepository', () => {
           updatedAt: dateNow,
         },
       ];
-      
+
       // Mock getAllTags to return our mock tag list
       jest.spyOn(repository, 'getAllTags').mockResolvedValue(mockTags);
-      
+
       const result = await repository.getTagHierarchy();
-      
+
       // Expected hierarchy
       const expected: TagTreeNode[] = [
         {
@@ -201,7 +207,7 @@ describe('SQLiteTagRepository', () => {
           ],
         },
       ];
-      
+
       expect(result).toEqual(expected);
     });
   });

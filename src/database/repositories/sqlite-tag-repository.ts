@@ -98,12 +98,13 @@ export class SQLiteTagRepository implements TagRepository {
    */
   async getChildTags(parentId: number | null): Promise<Tag[]> {
     return new Promise<Tag[]>((resolve, reject) => {
-      const sql = parentId === null
-        ? 'SELECT id, name, color, parent_id as parentId, created_at as createdAt, updated_at as updatedAt FROM tags WHERE parent_id IS NULL ORDER BY name'
-        : 'SELECT id, name, color, parent_id as parentId, created_at as createdAt, updated_at as updatedAt FROM tags WHERE parent_id = ? ORDER BY name';
-      
+      const sql =
+        parentId === null
+          ? 'SELECT id, name, color, parent_id as parentId, created_at as createdAt, updated_at as updatedAt FROM tags WHERE parent_id IS NULL ORDER BY name'
+          : 'SELECT id, name, color, parent_id as parentId, created_at as createdAt, updated_at as updatedAt FROM tags WHERE parent_id = ? ORDER BY name';
+
       const params = parentId === null ? [] : [parentId];
-      
+
       this.db.all(sql, params, (err, rows: any[]) => {
         if (err) {
           reject(err);
@@ -130,29 +131,31 @@ export class SQLiteTagRepository implements TagRepository {
   async getTagHierarchy(rootId?: number | null): Promise<TagTreeNode[]> {
     // Get all tags first
     const allTags = await this.getAllTags();
-    
+
     // Function to build tree recursively
     const buildTree = (parentId: number | null): TagTreeNode[] => {
       return allTags
-        .filter(tag => tag.parentId === parentId)
-        .map(tag => ({
+        .filter((tag) => tag.parentId === parentId)
+        .map((tag) => ({
           ...tag,
-          children: buildTree(tag.id)
+          children: buildTree(tag.id),
         }));
     };
-    
+
     // If rootId is specified, build tree from that node
     if (rootId !== undefined && rootId !== null) {
-      const rootTag = allTags.find(tag => tag.id === rootId);
+      const rootTag = allTags.find((tag) => tag.id === rootId);
       if (!rootTag) {
         return [];
       }
-      return [{
-        ...rootTag,
-        children: buildTree(rootId)
-      }];
+      return [
+        {
+          ...rootTag,
+          children: buildTree(rootId),
+        },
+      ];
     }
-    
+
     // Otherwise build the entire tree starting from root nodes
     return buildTree(null);
   }
@@ -210,17 +213,13 @@ export class SQLiteTagRepository implements TagRepository {
    */
   async deleteTag(id: number): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.db.run(
-        'DELETE FROM tags WHERE id = ?',
-        [id],
-        function (this: { changes: number }, err) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(this.changes > 0);
-          }
+      this.db.run('DELETE FROM tags WHERE id = ?', [id], function (this: { changes: number }, err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(this.changes > 0);
         }
-      );
+      });
     });
   }
 
