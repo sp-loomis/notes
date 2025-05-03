@@ -89,6 +89,10 @@ body,
 
 .navigator-content.with-note {
   padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 /* Main content area */
@@ -448,10 +452,12 @@ body,
 /* Note Attributes Panel styles */
 .note-attributes-panel {
   background-color: white;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 15px;
-  overflow: hidden;
+  height: 100%;
+  overflow: auto;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .note-attributes-panel .panel-header {
@@ -714,10 +720,8 @@ body,
 
 .component-listing-placeholder {
   background-color: white;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  height: 100%;
   padding: 15px;
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -732,4 +736,22 @@ body,
 
 .component-listing-placeholder p {
   margin: 5px 0;
+}
+
+/* Resizable panels styling */
+.attributes-pane,
+.components-pane {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-scroll-container {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  flex: 1;
+  padding: 15px;
+  box-sizing: border-box;
 }

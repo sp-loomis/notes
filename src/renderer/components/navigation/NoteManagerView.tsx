@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Icon from '@mdi/react';
 import { mdiNotebook, mdiPlus, mdiRefresh, mdiAlert, mdiClose } from '@mdi/js';
+import { Allotment } from 'allotment';
 import { useNotes } from '../../contexts/NotesContext';
 import { useComponents } from '../../contexts/ComponentsContext';
 import NoteAttributesPanel from '../noteManager/NoteAttributesPanel';
@@ -136,17 +137,21 @@ const NoteManagerView: React.FC = () => {
         </button>
       </div>
       <div className="navigator-content with-note">
-        <div className="note-manager-panels">
+        <Allotment vertical defaultSizes={[40, 60]}>
           {/* Note Attributes Panel */}
-          <NoteAttributesPanel onClose={handleCloseNote} />
+          <Allotment.Pane snap preferredSize={250} minSize={150} maxSize={500}>
+            <NoteAttributesPanel onClose={handleCloseNote} />
+          </Allotment.Pane>
 
           {/* Component Listing Panel will be added in Sprint 5.3 */}
-          <div className="component-listing-placeholder">
-            <h3>Component Listing</h3>
-            <p>Coming in Sprint 5.3</p>
-            <p>Components: {components.length}</p>
-          </div>
-        </div>
+          <Allotment.Pane minSize={150}>
+            <div className="component-listing-placeholder">
+              <h3>Component Listing</h3>
+              <p>Coming in Sprint 5.3</p>
+              <p>Components: {components.length}</p>
+            </div>
+          </Allotment.Pane>
+        </Allotment>
       </div>
     </div>
   );
