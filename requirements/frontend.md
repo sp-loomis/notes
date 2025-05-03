@@ -21,8 +21,9 @@ The Notes application is an Electron-based desktop application with a React fron
 | @mdi/react                | Material Design Icons | [npm](https://www.npmjs.com/package/@mdi/react)                                                  |
 | Lexical                   | Rich text editor      | [GitHub](https://github.com/facebook/lexical)                                                    |
 | Leaflet/react-leaflet     | GeoJSON visualization | [GitHub](https://github.com/Leaflet/Leaflet), [npm](https://www.npmjs.com/package/react-leaflet) |
+| TLDraw                    | Drawing component     | [GitHub](https://github.com/tldraw/tldraw)                                                       |
 
-> **Note:** Drawing component with Excalidraw will be integrated in a later phase due to compatibility issues with the current React version.
+> **Note:** TLDraw will be integrated in Phase 10 of development.
 
 ## Application Layout
 
@@ -142,7 +143,7 @@ Split into two vertical panels:
 
 #### Edit Mode
 
-- Shows editor appropriate to component type (Lexical, Excalidraw, etc.)
+- Shows editor appropriate to component type (Lexical, TLDraw, etc.)
 - Save button replaces edit button
 - Saving creates a new version
 
@@ -174,7 +175,7 @@ Each newly opened component properly sizes within its panel.
 - Uses Leaflet for map display
 - Provides map controls
 
-### Excalidraw Component
+### TLDraw Component
 
-- Integrates Excalidraw for drawing
+- Integrates TLDraw for drawing
 - Full drawing capabilities
