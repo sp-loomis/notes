@@ -8,6 +8,16 @@ import {
 import { ComponentVersion } from '../../database/models/component-version';
 import { componentRepository } from '../../database';
 
+// Define error categories for better error handling
+export enum ComponentErrorType {
+  LOAD = 'load',
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  SELECT = 'select',
+  VERSION = 'version',
+}
+
 // Define the context type
 interface ComponentsContextType {
   components: Component[];
@@ -15,6 +25,7 @@ interface ComponentsContextType {
   selectedVersion: ComponentVersion | null;
   loading: boolean;
   error: string | null;
+  errorType: ComponentErrorType | null;
   loadComponentsForNote: (noteId: number) => Promise<void>;
   selectComponent: (componentId: number) => Promise<void>;
   loadComponentVersion: (versionId: string) => Promise<void>;
@@ -23,6 +34,7 @@ interface ComponentsContextType {
   updateComponent: (id: number, data: UpdateComponentData) => Promise<boolean>;
   updateComponentContent: (componentId: number, content: string) => Promise<string>;
   deleteComponent: (id: number) => Promise<boolean>;
+  clearError: () => void;
 }
 
 // Create the context with default values
@@ -32,6 +44,7 @@ const ComponentsContext = createContext<ComponentsContextType>({
   selectedVersion: null,
   loading: false,
   error: null,
+  errorType: null,
   loadComponentsForNote: async () => {},
   selectComponent: async () => {},
   loadComponentVersion: async () => {},
@@ -40,6 +53,7 @@ const ComponentsContext = createContext<ComponentsContextType>({
   updateComponent: async () => false,
   updateComponentContent: async () => '',
   deleteComponent: async () => false,
+  clearError: () => {},
 });
 
 // Custom hook to use the components context
@@ -52,20 +66,34 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
   const [selectedVersion, setSelectedVersion] = useState<ComponentVersion | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorType, setErrorType] = useState<ComponentErrorType | null>(null);
+  
+  // Helper function to set error with type
+  const setErrorWithType = (message: string, type: ComponentErrorType) => {
+    setError(message);
+    setErrorType(type);
+    console.error(`[${type}] ${message}`);
+  };
+
+  // Helper function to clear errors
+  const clearError = () => {
+    setError(null);
+    setErrorType(null);
+  };
 
   // Load components for a note
   const loadComponentsForNote = async (noteId: number): Promise<void> => {
     try {
       setLoading(true);
-      setError(null);
+      clearError();
       const fetchedComponents = await componentRepository.getComponentsByNoteId(noteId);
       setComponents(fetchedComponents);
       // Reset selections when loading new note components
       setSelectedComponent(null);
       setSelectedVersion(null);
     } catch (err) {
-      setError(`Failed to load components: ${err instanceof Error ? err.message : String(err)}`);
-      console.error('Error loading components:', err);
+      const errorMessage = `Failed to load components: ${err instanceof Error ? err.message : String(err)}`;
+      setErrorWithType(errorMessage, ComponentErrorType.LOAD);
     } finally {
       setLoading(false);
     }
@@ -75,7 +103,7 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
   const selectComponent = async (componentId: number): Promise<void> => {
     try {
       setLoading(true);
-      setError(null);
+      clearError();
       const component = await componentRepository.getComponentById(componentId);
       setSelectedComponent(component);
       if (component) {
@@ -84,8 +112,8 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
         setSelectedVersion(null);
       }
     } catch (err) {
-      setError(`Failed to select component: ${err instanceof Error ? err.message : String(err)}`);
-      console.error('Error selecting component:', err);
+      const errorMessage = `Failed to select component: ${err instanceof Error ? err.message : String(err)}`;
+      setErrorWithType(errorMessage, ComponentErrorType.SELECT);
     } finally {
       setLoading(false);
     }
@@ -95,12 +123,12 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
   const loadComponentVersion = async (versionId: string): Promise<void> => {
     try {
       setLoading(true);
-      setError(null);
+      clearError();
       const version = await componentRepository.getComponentVersion(versionId);
       setSelectedVersion(version);
     } catch (err) {
-      setError(`Failed to load version: ${err instanceof Error ? err.message : String(err)}`);
-      console.error('Error loading version:', err);
+      const errorMessage = `Failed to load version: ${err instanceof Error ? err.message : String(err)}`;
+      setErrorWithType(errorMessage, ComponentErrorType.VERSION);
     } finally {
       setLoading(false);
     }
@@ -110,14 +138,12 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
   const loadLatestVersion = async (componentId: number): Promise<void> => {
     try {
       setLoading(true);
-      setError(null);
+      clearError();
       const latestVersion = await componentRepository.getLatestComponentVersion(componentId);
       setSelectedVersion(latestVersion);
     } catch (err) {
-      setError(
-        `Failed to load latest version: ${err instanceof Error ? err.message : String(err)}`
-      );
-      console.error('Error loading latest version:', err);
+      const errorMessage = `Failed to load latest version: ${err instanceof Error ? err.message : String(err)}`;
+      setErrorWithType(errorMessage, ComponentErrorType.VERSION);
     } finally {
       setLoading(false);
     }
@@ -130,7 +156,7 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
   ): Promise<number> => {
     try {
       setLoading(true);
-      setError(null);
+      clearError();
       const componentId = await componentRepository.createComponent(data);
 
       if (componentId > 0) {
@@ -142,8 +168,8 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
 
       return componentId;
     } catch (err) {
-      setError(`Failed to create component: ${err instanceof Error ? err.message : String(err)}`);
-      console.error('Error creating component:', err);
+      const errorMessage = `Failed to create component: ${err instanceof Error ? err.message : String(err)}`;
+      setErrorWithType(errorMessage, ComponentErrorType.CREATE);
       return -1;
     } finally {
       setLoading(false);
@@ -154,7 +180,7 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
   const updateComponent = async (id: number, data: UpdateComponentData): Promise<boolean> => {
     try {
       setLoading(true);
-      setError(null);
+      clearError();
       const success = await componentRepository.updateComponent(id, data);
 
       if (success && selectedComponent && selectedComponent.id === id) {
@@ -178,8 +204,8 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
 
       return success;
     } catch (err) {
-      setError(`Failed to update component: ${err instanceof Error ? err.message : String(err)}`);
-      console.error('Error updating component:', err);
+      const errorMessage = `Failed to update component: ${err instanceof Error ? err.message : String(err)}`;
+      setErrorWithType(errorMessage, ComponentErrorType.UPDATE);
       return false;
     } finally {
       setLoading(false);
@@ -190,7 +216,7 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
   const updateComponentContent = async (componentId: number, content: string): Promise<string> => {
     try {
       setLoading(true);
-      setError(null);
+      clearError();
       const versionId = await componentRepository.createComponentVersion(componentId, content);
 
       // Load the new version
@@ -200,8 +226,8 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
 
       return versionId;
     } catch (err) {
-      setError(`Failed to update content: ${err instanceof Error ? err.message : String(err)}`);
-      console.error('Error updating content:', err);
+      const errorMessage = `Failed to update content: ${err instanceof Error ? err.message : String(err)}`;
+      setErrorWithType(errorMessage, ComponentErrorType.UPDATE);
       return '';
     } finally {
       setLoading(false);
@@ -212,7 +238,7 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
   const deleteComponent = async (id: number): Promise<boolean> => {
     try {
       setLoading(true);
-      setError(null);
+      clearError();
       const success = await componentRepository.deleteComponent(id);
 
       if (success) {
@@ -228,8 +254,8 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
 
       return success;
     } catch (err) {
-      setError(`Failed to delete component: ${err instanceof Error ? err.message : String(err)}`);
-      console.error('Error deleting component:', err);
+      const errorMessage = `Failed to delete component: ${err instanceof Error ? err.message : String(err)}`;
+      setErrorWithType(errorMessage, ComponentErrorType.DELETE);
       return false;
     } finally {
       setLoading(false);
@@ -244,6 +270,7 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
         selectedVersion,
         loading,
         error,
+        errorType,
         loadComponentsForNote,
         selectComponent,
         loadComponentVersion,
@@ -252,6 +279,7 @@ export const ComponentsProvider: React.FC<{ children: ReactNode }> = ({ children
         updateComponent,
         updateComponentContent,
         deleteComponent,
+        clearError,
       }}
     >
       {children}

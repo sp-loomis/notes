@@ -103,7 +103,66 @@ body,
   flex: 1;
   background-color: white;
   overflow: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Common loading and error states */
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 20px;
+  color: #718096;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 15px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #3498db;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+.error-message .retry-button {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: transparent;
+  border: none;
+  color: #1976d2;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.error-message .retry-button:hover {
+  background-color: rgba(25, 118, 210, 0.08);
 }
 
 /* Placeholder styles */
@@ -834,16 +893,50 @@ body,
   color: #4299e1;
 }
 
+/* Enhanced error message styling */
 .component-listing-panel .error-message {
   margin: 10px 15px;
   padding: 8px 12px;
-  background-color: #fed7d7;
+  background-color: #ffebee;
   border-radius: 4px;
-  color: #c53030;
+  color: #c62828;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  font-size: 13px;
+}
+
+.component-listing-panel .error-message .retry-button {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #1976d2;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Loading indicator with spinner */
+.component-listing-panel .loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: #718096;
+  text-align: center;
+}
+
+.component-listing-panel .loading-spinner {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 10px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #3498db;
+  animation: spin 1s ease-in-out infinite;
 }
 
 .component-listing-panel .component-list {
@@ -863,14 +956,6 @@ body,
   padding: 20px;
 }
 
-.component-listing-panel .loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100px;
-  color: #718096;
-}
-
 .component-listing-panel .component-list ul {
   list-style: none;
   padding: 0;
@@ -880,6 +965,7 @@ body,
   gap: 8px;
 }
 
+/* Enhanced component item styling for better selection feedback */
 .component-listing-panel .component-item {
   display: flex;
   align-items: center;
@@ -888,16 +974,19 @@ body,
   border: 1px solid #e2e8f0;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .component-listing-panel .component-item:hover {
   background-color: #f7fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .component-listing-panel .component-item.selected {
-  background-color: #ebf8ff;
-  border-color: #bee3f8;
+  background-color: #e3f2fd;
+  border-color: #90caf9;
+  box-shadow: 0 2px 5px rgba(33, 150, 243, 0.1);
 }
 
 .component-listing-panel .component-icon {
@@ -915,95 +1004,6 @@ body,
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  position: relative;
-}
-
-.component-listing-panel .component-name {
-  font-weight: 500;
-  color: #2d3748;
-}
-
-.component-listing-panel .component-metadata {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: #718096;
-}
-
-.component-listing-panel .component-actions {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: flex;
-  gap: 4px;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.component-listing-panel .component-item:hover .component-actions {
-  opacity: 1;
-}
-
-.component-listing-panel .icon-button.small {
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #4a5568;
-  transition: background-color 0.2s;
-}
-
-.component-listing-panel .icon-button.small:hover {
-  background-color: #edf2f7;
-}
-
-.component-listing-panel .component-edit {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  width: 100%;
-}
-
-.component-listing-panel .component-edit input {
-  flex: 1;
-  padding: 4px 8px;
-  border: 1px solid #cbd5e0;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.component-listing-panel .edit-actions {
-  display: flex;
-  gap: 4px;
-}
-
-.component-listing-panel .component-creation-form {
-  margin: 15px;
-  padding: 15px;
-  background-color: #f7fafc;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-}
-
-.component-listing-panel .component-creation-form h4 {
-  margin: 0 0 15px;
-  font-size: 16px;
-  color: #2d3748;
-}
-
-.component-listing-panel .form-group {
-  margin-bottom: 12px;
-}
-
-.component-listing-panel .form-group label {
-  display: block;
   margin-bottom: 6px;
   font-size: 14px;
   color: #4a5568;

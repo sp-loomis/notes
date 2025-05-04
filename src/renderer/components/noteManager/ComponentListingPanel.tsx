@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from '@mdi/react';
 import {
   mdiCodeBraces,
@@ -12,8 +12,9 @@ import {
   mdiDelete,
   mdiAlertCircle,
   mdiCalendar,
+  mdiRefresh,
 } from '@mdi/js';
-import { useComponents } from '../../contexts/ComponentsContext';
+import { useComponents, ComponentErrorType } from '../../contexts/ComponentsContext';
 import { Component, ComponentType, CreateComponentData } from '../../../database/models/component';
 import DeleteConfirmationModal from '../common/DeleteConfirmationModal';
 
@@ -26,11 +27,14 @@ const ComponentListingPanel: React.FC<ComponentListingPanelProps> = ({ noteId })
     components,
     loading,
     error,
+    errorType,
     selectedComponent,
     createComponent,
     updateComponent,
     deleteComponent,
     selectComponent,
+    loadComponentsForNote,
+    clearError,
   } = useComponents();
 
   const [isCreating, setIsCreating] = useState(false);
@@ -42,7 +46,14 @@ const ComponentListingPanel: React.FC<ComponentListingPanelProps> = ({ noteId })
   const [editingComponentName, setEditingComponentName] = useState('');
 
   const [componentToDelete, setComponentToDelete] = useState<Component | null>(null);
-  const [componentError, setComponentError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  // Load components when noteId changes
+  useEffect(() => {
+    if (noteId > 0) {
+      loadComponentsForNote(noteId);
+    }
+  }, [noteId]);
 
   // Get icon for component type
   const getComponentTypeIcon = (type: ComponentType) => {
@@ -70,12 +81,36 @@ const ComponentListingPanel: React.FC<ComponentListingPanelProps> = ({ noteId })
     });
   };
 
+  // Handle retry button click based on error type
+  const handleRetry = async () => {
+    clearError();
+    setLocalError(null);
+    
+    switch (errorType) {
+      case ComponentErrorType.LOAD:
+        await loadComponentsForNote(noteId);
+        break;
+      case ComponentErrorType.CREATE:
+        setIsCreating(true);
+        break;
+      case ComponentErrorType.UPDATE:
+        // Don't auto-retry updates
+        break;
+      case ComponentErrorType.DELETE:
+        // Don't auto-retry deletes
+        break;
+      default:
+        // For other errors, just refresh components
+        await loadComponentsForNote(noteId);
+    }
+  };
+
   // Handle component creation form submission
   const handleCreateComponent = async () => {
     if (!newComponentName.trim()) return;
 
     try {
-      setComponentError(null);
+      setLocalError(null);
       const data: CreateComponentData = {
         noteId,
         name: newComponentName.trim(),
@@ -112,10 +147,10 @@ const ComponentListingPanel: React.FC<ComponentListingPanelProps> = ({ noteId })
         // Select the new component
         await selectComponent(componentId);
       } else {
-        setComponentError('Failed to create component.');
+        setLocalError('Failed to create component.');
       }
     } catch (err) {
-      setComponentError(
+      setLocalError(
         `Error creating component: ${err instanceof Error ? err.message : String(err)}`
       );
     }
@@ -126,14 +161,14 @@ const ComponentListingPanel: React.FC<ComponentListingPanelProps> = ({ noteId })
     setEditingComponentId(component.id);
     setEditingComponentName(component.name);
     setIsEditing(true);
-    setComponentError(null);
+    setLocalError(null);
   };
 
   // Cancel editing component name
   const handleCancelEditing = () => {
     setIsEditing(false);
     setEditingComponentId(null);
-    setComponentError(null);
+    setLocalError(null);
   };
 
   // Save component name changes
@@ -141,7 +176,7 @@ const ComponentListingPanel: React.FC<ComponentListingPanelProps> = ({ noteId })
     if (!editingComponentId || !editingComponentName.trim()) return;
 
     try {
-      setComponentError(null);
+      setLocalError(null);
       const success = await updateComponent(editingComponentId, {
         name: editingComponentName.trim(),
       });
@@ -150,10 +185,10 @@ const ComponentListingPanel: React.FC<ComponentListingPanelProps> = ({ noteId })
         setIsEditing(false);
         setEditingComponentId(null);
       } else {
-        setComponentError('Failed to update component name.');
+        setLocalError('Failed to update component name.');
       }
     } catch (err) {
-      setComponentError(
+      setLocalError(
         `Error updating component: ${err instanceof Error ? err.message : String(err)}`
       );
     }
@@ -164,16 +199,16 @@ const ComponentListingPanel: React.FC<ComponentListingPanelProps> = ({ noteId })
     if (!componentToDelete) return;
 
     try {
-      setComponentError(null);
+      setLocalError(null);
       const success = await deleteComponent(componentToDelete.id);
 
       if (success) {
         setComponentToDelete(null);
       } else {
-        setComponentError('Failed to delete component.');
+        setLocalError('Failed to delete component.');
       }
     } catch (err) {
-      setComponentError(
+      setLocalError(
         `Error deleting component: ${err instanceof Error ? err.message : String(err)}`
       );
     }
@@ -182,10 +217,10 @@ const ComponentListingPanel: React.FC<ComponentListingPanelProps> = ({ noteId })
   // Handle component selection
   const handleSelectComponent = async (component: Component) => {
     try {
-      setComponentError(null);
+      setLocalError(null);
       await selectComponent(component.id);
     } catch (err) {
-      setComponentError(
+      setLocalError(
         `Error selecting component: ${err instanceof Error ? err.message : String(err)}`
       );
     }
@@ -199,20 +234,33 @@ const ComponentListingPanel: React.FC<ComponentListingPanelProps> = ({ noteId })
           className="icon-button primary"
           onClick={() => setIsCreating(true)}
           title="Add component"
+          disabled={loading}
         >
           <Icon path={mdiPlus} size={0.9} />
         </button>
       </div>
 
-      {(error || componentError) && (
+      {/* Error message display */}
+      {(error || localError) && (
         <div className="error-message">
           <Icon path={mdiAlertCircle} size={0.8} />
-          <span>{error || componentError}</span>
+          <span>{error || localError}</span>
+          <button className="retry-button" onClick={handleRetry} title="Retry">
+            <Icon path={mdiRefresh} size={0.7} />
+          </button>
+        </div>
+      )}
+
+      {/* Loading indicator */}
+      {loading && (
+        <div className="loading-indicator">
+          <div className="loading-spinner"></div>
+          <p>Loading components...</p>
         </div>
       )}
 
       {/* Component creation form */}
-      {isCreating && (
+      {isCreating && !loading && (
         <div className="component-creation-form">
           <h4>New Component</h4>
           <div className="form-group">
@@ -256,99 +304,100 @@ const ComponentListingPanel: React.FC<ComponentListingPanelProps> = ({ noteId })
       )}
 
       {/* Component listing */}
-      <div className="component-list">
-        {loading ? (
-          <div className="loading">Loading components...</div>
-        ) : components.length === 0 ? (
-          <div className="empty-message">
-            <p>No components yet</p>
-            <button className="primary-button" onClick={() => setIsCreating(true)}>
-              Create Component
-            </button>
-          </div>
-        ) : (
-          <ul>
-            {components.map((component) => (
-              <li
-                key={component.id}
-                className={`component-item ${selectedComponent?.id === component.id ? 'selected' : ''}`}
-                onClick={() => handleSelectComponent(component)}
-              >
-                <div className="component-icon" data-testid="component-icon">
-                  <Icon path={getComponentTypeIcon(component.type)} size={0.9} />
-                </div>
-
-                <div className="component-info">
-                  {isEditing && editingComponentId === component.id ? (
-                    <div className="component-edit">
-                      <input
-                        type="text"
-                        value={editingComponentName}
-                        onChange={(e) => setEditingComponentName(e.target.value)}
-                        onClick={(e) => e.stopPropagation()}
-                        autoFocus
-                      />
-                      <div className="edit-actions">
-                        <button
-                          className="icon-button small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSaveEditing();
-                          }}
-                          disabled={!editingComponentName.trim() || loading}
-                          title="Save"
-                        >
-                          <Icon path={mdiCheck} size={0.7} />
-                        </button>
-                        <button
-                          className="icon-button small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCancelEditing();
-                          }}
-                          title="Cancel"
-                        >
-                          <Icon path={mdiClose} size={0.7} />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <span className="component-name">{component.name}</span>
-                      <div className="component-actions">
-                        <button
-                          className="icon-button small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleStartEditing(component);
-                          }}
-                          title="Rename"
-                        >
-                          <Icon path={mdiPencil} size={0.7} />
-                        </button>
-                        <button
-                          className="icon-button small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setComponentToDelete(component);
-                          }}
-                          title="Delete"
-                        >
-                          <Icon path={mdiDelete} size={0.7} />
-                        </button>
-                      </div>
-                    </>
-                  )}
-                  <div className="component-metadata">
-                    <Icon path={mdiCalendar} size={0.6} />
-                    <span>{formatDate(component.updatedAt)}</span>
+      {!loading && (
+        <div className="component-list">
+          {components.length === 0 ? (
+            <div className="empty-message">
+              <p>No components yet</p>
+              <button className="primary-button" onClick={() => setIsCreating(true)}>
+                Create Component
+              </button>
+            </div>
+          ) : (
+            <ul>
+              {components.map((component) => (
+                <li
+                  key={component.id}
+                  className={`component-item ${selectedComponent?.id === component.id ? 'selected' : ''}`}
+                  onClick={() => handleSelectComponent(component)}
+                  data-testid={`component-item-${component.id}`}
+                >
+                  <div className="component-icon" data-testid="component-icon">
+                    <Icon path={getComponentTypeIcon(component.type)} size={0.9} />
                   </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+
+                  <div className="component-info">
+                    {isEditing && editingComponentId === component.id ? (
+                      <div className="component-edit">
+                        <input
+                          type="text"
+                          value={editingComponentName}
+                          onChange={(e) => setEditingComponentName(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          autoFocus
+                        />
+                        <div className="edit-actions">
+                          <button
+                            className="icon-button small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSaveEditing();
+                            }}
+                            disabled={!editingComponentName.trim() || loading}
+                            title="Save"
+                          >
+                            <Icon path={mdiCheck} size={0.7} />
+                          </button>
+                          <button
+                            className="icon-button small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCancelEditing();
+                            }}
+                            title="Cancel"
+                          >
+                            <Icon path={mdiClose} size={0.7} />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <span className="component-name">{component.name}</span>
+                        <div className="component-actions">
+                          <button
+                            className="icon-button small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleStartEditing(component);
+                            }}
+                            title="Rename"
+                          >
+                            <Icon path={mdiPencil} size={0.7} />
+                          </button>
+                          <button
+                            className="icon-button small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setComponentToDelete(component);
+                            }}
+                            title="Delete"
+                          >
+                            <Icon path={mdiDelete} size={0.7} />
+                          </button>
+                        </div>
+                      </>
+                    )}
+                    <div className="component-metadata">
+                      <Icon path={mdiCalendar} size={0.6} />
+                      <span>{formatDate(component.updatedAt)}</span>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       {/* Delete confirmation modal */}
       {componentToDelete && (
