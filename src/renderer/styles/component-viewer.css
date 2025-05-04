@@ -1,0 +1,226 @@
+/* Component Viewer Styles */
+
+.component-viewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.component-viewer-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: #666;
+  padding: 20px;
+}
+
+.component-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+}
+
+.component-title h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.component-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.version-selector {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: 5px;
+}
+
+.version-selector select {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.component-content {
+  flex: 1;
+  overflow: auto;
+  padding: 15px;
+}
+
+/* Markup Viewer */
+.markup-viewer {
+  height: 100%;
+}
+
+.markup-editor {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: monospace;
+  resize: none;
+}
+
+.markup-content {
+  min-height: 100px;
+}
+
+/* Image Viewer */
+.image-viewer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.image-display {
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+  max-height: calc(100vh - 200px);
+}
+
+.image-display img {
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.no-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #888;
+  font-style: italic;
+  background-color: #f9f9f9;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+}
+
+.image-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.image-preview {
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+  max-height: 300px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.image-preview img {
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.image-upload {
+  padding: 15px;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  background-color: #fafafa;
+}
+
+.helper-text {
+  font-size: 12px;
+  color: #777;
+  margin-top: 8px;
+}
+
+/* GeoJSON Viewer */
+.geojson-viewer {
+  height: 100%;
+}
+
+.geojson-editor {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: monospace;
+  resize: none;
+}
+
+.geojson-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.geojson-content {
+  width: 100%;
+  max-height: 200px;
+  overflow: auto;
+  font-family: monospace;
+  font-size: 12px;
+  background-color: #f5f5f5;
+  padding: 10px;
+  margin-top: 15px;
+  text-align: left;
+}
+
+/* TLDraw Viewer */
+.tldraw-viewer {
+  height: 100%;
+}
+
+.tldraw-editor-placeholder,
+.tldraw-display-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.tldraw-content-editor {
+  width: 100%;
+  height: 200px;
+  margin-top: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: monospace;
+  resize: none;
+}
+
+.tldraw-content {
+  width: 100%;
+  max-height: 200px;
+  overflow: auto;
+  font-family: monospace;
+  font-size: 12px;
+  background-color: #f5f5f5;
+  padding: 10px;
+  margin-top: 15px;
+  text-align: left;
+}
