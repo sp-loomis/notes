@@ -274,7 +274,7 @@ const ComponentListingPanel: React.FC<ComponentListingPanelProps> = ({ noteId })
                 className={`component-item ${selectedComponent?.id === component.id ? 'selected' : ''}`}
                 onClick={() => handleSelectComponent(component)}
               >
-                <div className="component-icon">
+                <div className="component-icon" data-testid="component-icon">
                   <Icon path={getComponentTypeIcon(component.type)} size={0.9} />
                 </div>
 
