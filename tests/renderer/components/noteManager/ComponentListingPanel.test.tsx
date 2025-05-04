@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import ComponentListingPanel from '../../../../src/renderer/components/noteManager/ComponentListingPanel';
 import ComponentsContext from '../../../../src/renderer/contexts/ComponentsContext';
 import { ComponentType } from '../../../../src/database/models/component';
