@@ -4,7 +4,11 @@ import { mdiMagnify } from '@mdi/js';
 import { useNotes } from '../../contexts/NotesContext';
 import { useComponents } from '../../contexts/ComponentsContext';
 
-const SearchView: React.FC = () => {
+interface SearchViewProps {
+  onSwitchToNoteManager: () => void;
+}
+
+const SearchView: React.FC<SearchViewProps> = ({ onSwitchToNoteManager }) => {
   const { notes, selectNote } = useNotes();
   const { loadComponentsForNote } = useComponents();
 
@@ -13,6 +17,8 @@ const SearchView: React.FC = () => {
     await selectNote(noteId);
     // Load components for the selected note
     await loadComponentsForNote(noteId);
+    // Switch to Note Manager view
+    onSwitchToNoteManager();
   };
 
   return (

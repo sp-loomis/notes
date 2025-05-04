@@ -190,9 +190,6 @@ const NoteAttributesPanel: React.FC<NoteAttributesPanelProps> = ({ onClose }) =>
           >
             <Icon path={mdiDelete} size={0.9} />
           </button>
-          <button className="icon-button close-button" onClick={onClose} title="Close note">
-            <Icon path={mdiClose} size={0.9} />
-          </button>
         </div>
       </div>
 

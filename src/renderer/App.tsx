@@ -21,13 +21,13 @@ const App: React.FC = () => {
   const renderNavigatorContent = () => {
     switch (activeTab) {
       case 'search':
-        return <SearchView />;
+        return <SearchView onSwitchToNoteManager={() => setActiveTab('notes')} />;
       case 'notes':
         return <NoteManagerView />;
       case 'tags':
         return <TagOrganizerView />;
       default:
-        return <SearchView />;
+        return <SearchView onSwitchToNoteManager={() => setActiveTab('notes')} />;
     }
   };
 
@@ -41,7 +41,13 @@ const App: React.FC = () => {
           {/* Main area with resizable panels */}
           <Allotment>
             {/* Navigator Panel - direct rendering without div */}
-            <Allotment.Pane preferredSize={300} minSize={200} maxSize={500} snap={true} className="navigator-panel">
+            <Allotment.Pane
+              preferredSize={300}
+              minSize={200}
+              maxSize={500}
+              snap={true}
+              className="navigator-panel"
+            >
               {renderNavigatorContent()}
             </Allotment.Pane>
 
