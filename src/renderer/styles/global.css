@@ -274,6 +274,33 @@ body,
   border-color: #3182ce;
 }
 
+.primary-button:disabled {
+  background-color: #a0aec0;
+  border-color: #a0aec0;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.secondary-button {
+  background-color: #edf2f7;
+  color: #4a5568;
+  border: 1px solid #e2e8f0;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.secondary-button:hover {
+  background-color: #e2e8f0;
+  border-color: #cbd5e0;
+}
+
+.secondary-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 /* Search View Styles */
 .search-view .search-results {
   display: flex;

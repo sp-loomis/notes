@@ -104,7 +104,11 @@ const NoteManagerView: React.FC = () => {
                   autoFocus
                 />
                 <div className="form-actions">
-                  <button type="button" onClick={() => setIsCreating(false)}>
+                  <button
+                    type="button"
+                    onClick={() => setIsCreating(false)}
+                    className="secondary-button"
+                  >
                     Cancel
                   </button>
                   <button type="submit" disabled={!newNoteTitle.trim()} className="primary-button">
