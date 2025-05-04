@@ -217,6 +217,29 @@ These tests verify the functionality of the NoteManagerView component, which dis
 
 These tests use Jest's mocking capabilities to mock the NotesContext and ComponentsContext, allowing us to test the component's behavior with different state configurations.
 
+### Note Attributes Panel Tests (`renderer/components/noteManager/NoteAttributesPanel.test.tsx`)
+
+These tests verify the functionality of the NoteAttributesPanel component, which displays and allows editing of note attributes:
+
+- **Rendering**
+
+  - Successfully renders note title and dates in display mode
+  - Shows edit and delete buttons
+  - Displays tags associated with the note
+
+- **Edit Mode**
+
+  - Switches to edit mode when the edit button is clicked
+  - Allows editing of note title
+  - Shows tag selector to add/remove tags
+  - Updates the note when changes are saved
+  - Properly cancels editing when the cancel button is clicked
+
+- **Deletion**
+  - Shows a confirmation dialog before deleting a note
+  - Successfully calls the deleteNote function when deletion is confirmed
+  - Cancels deletion when the cancel button is clicked
+
 ### Component Listing Panel Tests (`renderer/components/noteManager/ComponentListingPanel.test.tsx`)
 
 These tests verify the functionality of the ComponentListingPanel component, which displays the list of components for a note and provides component management features:
@@ -263,6 +286,38 @@ These tests verify the functionality of the ComponentListingPanel component, whi
   - Successfully deletes components when confirmed
   - Cancels deletion when the cancel button is clicked
 
+### Component Header Tests (`renderer/components/componentViewer/ComponentHeader.test.tsx`)
+
+These tests verify the functionality of the ComponentHeader component, which provides controls for viewing and editing components:
+
+- **Rendering**
+  - Successfully renders the component name
+  - Shows the edit/save button, close button, and version selector
+  - Correctly displays the component in view mode by default
+
+- **Interaction**
+  - Toggles between edit and view mode when the edit/save button is clicked
+  - Properly calls the onClose handler when the close button is clicked
+  - Calls the onVersionSelect handler with the correct version ID when a version is selected
+
+### Component Viewer Tests (`renderer/components/componentViewer/ComponentViewer.test.tsx`)
+
+These tests verify the functionality of the ComponentViewer component, which displays component content based on type:
+
+- **Empty State**
+  - Shows a placeholder when no component is selected
+
+- **Rendering**
+  - Correctly renders the component header
+  - Displays content based on component type (Markup, Image, GeoJSON, TLDraw)
+  - Shows the appropriate viewer for each component type
+
+- **Interaction**
+  - Toggles between edit and view mode 
+  - Saves content when in edit mode
+  - Properly calls the selectComponent function when the close button is clicked
+  - Loads different versions when selected from the version dropdown
+
 ## Testing Approach
 
 ### Mocking Strategy
@@ -289,25 +344,25 @@ Test coverage is tracked using Jest's built-in coverage tool. As of the current 
 - Good coverage of core CRUD operations for notes and tags
 - Strong testing of tag hierarchy functionality
 - Comprehensive testing of note-tag relationships
-- Areas for improvement in error handling coverage
 - Complete coverage of the TabBar component (100%)
 - Strong coverage of navigation functionality in the App component
+- Good coverage of the ComponentViewer and ComponentHeader components
+- Strong coverage of UI components for note management
 
 ## Future Test Expansion
 
 Future tests will include:
 
-1. ~~Component repository tests~~ ✅ Implemented
-2. ~~Component versioning functionality~~ ✅ Implemented
-3. Additional UI component tests for remaining components
-4. Search and filtering functionality tests
-5. Integration tests between repositories and UI
-6. End-to-end tests for complete workflows
-7. ~~Navigation component tests (SearchView, NoteManagerView, TagOrganizerView)~~ ✅ Partially implemented (NoteManagerView, TabBar)
-8. ~~Note management UI tests~~ ✅ Partially implemented (NoteAttributesPanel)
-9. Component viewing and editing tests
-10. Error handling and edge case tests for all repositories
-11. Tag Organizer UI comprehensive tests
+1. ✅ Component repository tests - Implemented
+2. ✅ Component versioning functionality - Implemented
+3. ✅ Navigation component tests - Implemented (NoteManagerView, TabBar)
+4. ✅ Note management UI tests - Implemented (NoteAttributesPanel, ComponentListingPanel)
+5. ✅ Component viewing and editing tests - Implemented (ComponentViewer, ComponentHeader)
+6. Search and filtering functionality tests
+7. Tag Organizer UI comprehensive tests
+8. Advanced component type viewers (GeoJSON, TLDraw)
+9. Integration tests between repositories and UI
+10. End-to-end tests for complete workflows
 
 ## Running Tests
 

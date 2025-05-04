@@ -8,6 +8,7 @@ import TabBar from './components/layout/TabBar';
 import SearchView from './components/navigation/SearchView';
 import NoteManagerView from './components/navigation/NoteManagerView';
 import TagOrganizerView from './components/navigation/TagOrganizerView';
+import ComponentViewer from './components/componentViewer/ComponentViewer';
 
 // Import context providers
 import { NotesProvider } from './contexts/NotesContext';
@@ -54,13 +55,7 @@ const App: React.FC = () => {
             {/* Main Content Area */}
             <Allotment.Pane>
               <div className="main-content">
-                <div className="placeholder">
-                  <h3>Notes Application</h3>
-                  <p>Select a note to view its contents</p>
-                  <p>
-                    <small>Main content area will be implemented in Phase 5</small>
-                  </p>
-                </div>
+                <ComponentViewer />
               </div>
             </Allotment.Pane>
           </Allotment>
