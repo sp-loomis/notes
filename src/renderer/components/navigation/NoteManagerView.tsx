@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import Icon from '@mdi/react';
 import { mdiNotebook, mdiPlus, mdiRefresh, mdiAlert, mdiClose } from '@mdi/js';
+import { Allotment } from 'allotment';
+import 'allotment/dist/style.css';
 import { useNotes } from '../../contexts/NotesContext';
 import { useComponents } from '../../contexts/ComponentsContext';
+import NoteAttributesPanel from '../noteManager/NoteAttributesPanel';
 
 const NoteManagerView: React.FC = () => {
   const { notes, selectedNote, loading, error, selectNote, createNote, refreshNotes } = useNotes();
@@ -43,7 +46,7 @@ const NoteManagerView: React.FC = () => {
   // Render loading state
   if (loading) {
     return (
-      <div className="navigator-view note-manager-view">
+      <div className="navigator-view">
         <div className="navigator-header">Note Manager</div>
         <div className="navigator-content">
           <div className="loading-indicator">
@@ -57,7 +60,7 @@ const NoteManagerView: React.FC = () => {
   // Render error state
   if (error) {
     return (
-      <div className="navigator-view note-manager-view">
+      <div className="navigator-view">
         <div className="navigator-header">Note Manager</div>
         <div className="navigator-content">
           <div className="error-message">
@@ -76,7 +79,7 @@ const NoteManagerView: React.FC = () => {
   // Render empty state (no selected note)
   if (!selectedNote) {
     return (
-      <div className="navigator-view note-manager-view">
+      <div className="navigator-view">
         <div className="navigator-header">
           Note Manager
           <button
@@ -125,26 +128,31 @@ const NoteManagerView: React.FC = () => {
     );
   }
 
-  // Render selected note view
+  // Render selected note view - with direct Allotment
   return (
-    <div className="navigator-view note-manager-view">
-      <div className="navigator-header">
+    <>
+      <div className="navigator-header note-manager-view">
         Note Manager
         <button className="close-note-button" onClick={handleCloseNote} aria-label="Close note">
           <Icon path={mdiClose} size={1} />
         </button>
       </div>
-      <div className="navigator-content with-note">
-        {/* This is a placeholder for the selected note view */}
-        {/* Will be replaced with NoteAttributesPanel and ComponentListingPanel in future sprints */}
-        <div className="selected-note-placeholder">
-          <h3>{selectedNote.title}</h3>
-          <p>Selected Note ID: {selectedNote.id}</p>
-          <p>Created: {new Date(selectedNote.createdAt).toLocaleDateString()}</p>
-          <p>Updated: {new Date(selectedNote.updatedAt).toLocaleDateString()}</p>
-        </div>
-      </div>
-    </div>
+      <Allotment vertical defaultSizes={[60, 40]} className="note-manager-allotment">
+        {/* Note Attributes Panel */}
+        <Allotment.Pane preferredSize={250} minSize={150}>
+          <NoteAttributesPanel onClose={handleCloseNote} />
+        </Allotment.Pane>
+
+        {/* Component Listing Panel will be added in Sprint 5.3 */}
+        <Allotment.Pane minSize={150}>
+          <div className="component-listing-placeholder">
+            <h3>Component Listing</h3>
+            <p>Coming in Sprint 5.3</p>
+            <p>Components: {components.length}</p>
+          </div>
+        </Allotment.Pane>
+      </Allotment>
+    </>
   );
 };
 
