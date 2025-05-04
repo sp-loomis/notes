@@ -755,3 +755,31 @@ body,
   padding: 15px;
   box-sizing: border-box;
 }
+
+/* Note Manager Allotment styling */
+.note-manager-allotment {
+  flex: 1;
+  height: calc(100% - 50px); /* Adjust for the navigator-header height */
+  overflow: hidden;
+}
+
+.note-attributes-panel {
+  background-color: white;
+  height: 100%;
+  overflow: auto;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.component-listing-placeholder {
+  background-color: white;
+  height: 100%;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #a0aec0;
+}

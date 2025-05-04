@@ -18,7 +18,7 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('search');
 
   // Render the appropriate navigator view based on the active tab
-  const renderNavigatorView = () => {
+  const renderNavigatorContent = () => {
     switch (activeTab) {
       case 'search':
         return <SearchView />;
@@ -40,9 +40,9 @@ const App: React.FC = () => {
 
           {/* Main area with resizable panels */}
           <Allotment>
-            {/* Navigator Panel */}
-            <Allotment.Pane preferredSize={300} minSize={200} maxSize={500} snap={true}>
-              <div className="navigator-panel">{renderNavigatorView()}</div>
+            {/* Navigator Panel - direct rendering without div */}
+            <Allotment.Pane preferredSize={300} minSize={200} maxSize={500} snap={true} className="navigator-panel">
+              {renderNavigatorContent()}
             </Allotment.Pane>
 
             {/* Main Content Area */}
