@@ -84,7 +84,7 @@ const NoteManagerView: React.FC = () => {
         <div className="navigator-header">
           Note Manager
           <button
-            className="create-note-button"
+            className="icon-button primary"
             onClick={() => setIsCreating(true)}
             aria-label="Create new note"
           >
@@ -104,7 +104,11 @@ const NoteManagerView: React.FC = () => {
                   autoFocus
                 />
                 <div className="form-actions">
-                  <button type="button" onClick={() => setIsCreating(false)}>
+                  <button
+                    type="button"
+                    onClick={() => setIsCreating(false)}
+                    className="secondary-button"
+                  >
                     Cancel
                   </button>
                   <button type="submit" disabled={!newNoteTitle.trim()} className="primary-button">
@@ -134,7 +138,7 @@ const NoteManagerView: React.FC = () => {
     <>
       <div className="navigator-header note-manager-view">
         Note Manager
-        <button className="close-note-button" onClick={handleCloseNote} aria-label="Close note">
+        <button className="icon-button secondary" onClick={handleCloseNote} aria-label="Close note">
           <Icon path={mdiClose} size={1} />
         </button>
       </div>

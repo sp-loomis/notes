@@ -196,7 +196,7 @@ const ComponentListingPanel: React.FC<ComponentListingPanelProps> = ({ noteId })
       <div className="panel-header">
         <h3>Components</h3>
         <button
-          className="icon-button add-component-button"
+          className="icon-button primary"
           onClick={() => setIsCreating(true)}
           title="Add component"
         >
