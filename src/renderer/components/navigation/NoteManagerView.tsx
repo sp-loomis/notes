@@ -6,6 +6,7 @@ import 'allotment/dist/style.css';
 import { useNotes } from '../../contexts/NotesContext';
 import { useComponents } from '../../contexts/ComponentsContext';
 import NoteAttributesPanel from '../noteManager/NoteAttributesPanel';
+import ComponentListingPanel from '../noteManager/ComponentListingPanel';
 
 const NoteManagerView: React.FC = () => {
   const { notes, selectedNote, loading, error, selectNote, createNote, refreshNotes } = useNotes();
@@ -143,13 +144,9 @@ const NoteManagerView: React.FC = () => {
           <NoteAttributesPanel onClose={handleCloseNote} />
         </Allotment.Pane>
 
-        {/* Component Listing Panel will be added in Sprint 5.3 */}
+        {/* Component Listing Panel */}
         <Allotment.Pane minSize={150}>
-          <div className="component-listing-placeholder">
-            <h3>Component Listing</h3>
-            <p>Coming in Sprint 5.3</p>
-            <p>Components: {components.length}</p>
-          </div>
+          <ComponentListingPanel noteId={selectedNote.id} />
         </Allotment.Pane>
       </Allotment>
     </>
