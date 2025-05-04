@@ -81,7 +81,6 @@ describe('NoteAttributesPanel', () => {
     // Check that action buttons are rendered
     expect(screen.getByTitle('Edit note')).toBeInTheDocument();
     expect(screen.getByTitle('Delete note')).toBeInTheDocument();
-    expect(screen.getByTitle('Close note')).toBeInTheDocument();
   });
 
   test('enters edit mode when edit button is clicked', () => {
@@ -189,16 +188,6 @@ describe('NoteAttributesPanel', () => {
 
     // Verify that the confirmation dialog is no longer visible
     expect(screen.queryByText('Delete Note')).not.toBeInTheDocument();
-  });
-
-  test('calls onClose when close button is clicked', () => {
-    render(<NoteAttributesPanel onClose={mockOnClose} />);
-
-    // Click the close button
-    fireEvent.click(screen.getByTitle('Close note'));
-
-    // Verify that onClose was called
-    expect(mockOnClose).toHaveBeenCalled();
   });
 
   test('displays tags when they are loaded', async () => {

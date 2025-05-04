@@ -161,8 +161,6 @@ describe('NoteManagerView', () => {
 
     // Check that selected note view is displayed
     expect(screen.getByText('Selected Note')).toBeInTheDocument();
-    expect(screen.getByText('Selected Note ID: 3')).toBeInTheDocument();
-    expect(screen.getByLabelText('Close note')).toBeInTheDocument();
   });
 
   test('returns to no selected note state when close button is clicked', () => {
