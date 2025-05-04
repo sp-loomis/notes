@@ -159,7 +159,7 @@ const NoteAttributesPanel: React.FC<NoteAttributesPanelProps> = ({ onClose }) =>
           {isEditing ? (
             <>
               <button
-                className="icon-button save-button"
+                className="icon-button success"
                 onClick={handleSaveChanges}
                 disabled={!title.trim() || loading}
                 title="Save changes"
@@ -167,7 +167,7 @@ const NoteAttributesPanel: React.FC<NoteAttributesPanelProps> = ({ onClose }) =>
                 <Icon path={mdiCheck} size={0.9} />
               </button>
               <button
-                className="icon-button cancel-button"
+                className="icon-button secondary"
                 onClick={handleCancelEditing}
                 title="Cancel editing"
               >
@@ -175,16 +175,12 @@ const NoteAttributesPanel: React.FC<NoteAttributesPanelProps> = ({ onClose }) =>
               </button>
             </>
           ) : (
-            <button
-              className="icon-button edit-button"
-              onClick={handleStartEditing}
-              title="Edit note"
-            >
+            <button className="icon-button primary" onClick={handleStartEditing} title="Edit note">
               <Icon path={mdiPencil} size={0.9} />
             </button>
           )}
           <button
-            className="icon-button delete-button"
+            className="icon-button danger"
             onClick={() => setShowDeleteConfirmation(true)}
             title="Delete note"
           >

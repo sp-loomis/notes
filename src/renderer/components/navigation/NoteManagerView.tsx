@@ -84,7 +84,7 @@ const NoteManagerView: React.FC = () => {
         <div className="navigator-header">
           Note Manager
           <button
-            className="create-note-button"
+            className="icon-button primary"
             onClick={() => setIsCreating(true)}
             aria-label="Create new note"
           >
@@ -134,7 +134,7 @@ const NoteManagerView: React.FC = () => {
     <>
       <div className="navigator-header note-manager-view">
         Note Manager
-        <button className="close-note-button" onClick={handleCloseNote} aria-label="Close note">
+        <button className="icon-button secondary" onClick={handleCloseNote} aria-label="Close note">
           <Icon path={mdiClose} size={1} />
         </button>
       </div>
