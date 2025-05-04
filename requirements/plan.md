@@ -191,27 +191,27 @@ This document outlines the incremental development plan for building the Notes a
 - Date display components ✅
 - Deletion confirmation dialog ✅
 
-#### Sprint 5.3: Component Listing Panel
+#### Sprint 5.3: Component Listing Panel ✅ COMPLETED
 
-**Goal:** Implement the Component Listing Panel functionality
+**Goal:** Implement the Component Listing Panel functionality ✅
 
 **Tasks:**
 
-- Design and implement component list with type icons
-- Create component creation form with type selection
-- Implement component renaming functionality
-- Add component deletion with confirmation
-- Implement last edit date display
-- Set up event handling for component selection
-- Create unit tests for Component Listing Panel
+- Design and implement component list with type icons ✅
+- Create component creation form with type selection ✅
+- Implement component renaming functionality ✅
+- Add component deletion with confirmation ✅
+- Implement last edit date display ✅
+- Set up event handling for component selection ✅
+- Create unit tests for Component Listing Panel ✅
 
 **Deliverables:**
 
-- Component list implementation
-- Component creation form
-- Component renaming functionality
-- Component deletion functionality
-- Event handlers for component selection
+- Component list implementation ✅
+- Component creation form ✅
+- Component renaming functionality ✅
+- Component deletion functionality ✅
+- Event handlers for component selection ✅
 
 #### Sprint 5.4: Main Content Area - Component Viewing
 
@@ -422,6 +422,90 @@ This document outlines the incremental development plan for building the Notes a
    - Test complete user workflows
    - Test application startup and initialization
    - Test data persistence
+
+## Testing Protocol
+
+### Test Directory Structure
+
+- All tests should be placed in the `/tests` directory
+- The test file structure should mirror the main source code structure:
+  - `/tests/database/` for database-related tests
+  - `/tests/renderer/` for UI component tests
+  - `/tests/renderer/components/` for component-specific tests
+  - Subdirectories should match the source structure (e.g., `/tests/renderer/components/noteManager/`)
+
+### Test File Naming
+
+- Database tests: `module-name.test.ts` (e.g., `note-repository.test.ts`)
+- UI Component tests: `ComponentName.test.tsx` (e.g., `NoteAttributesPanel.test.tsx`)
+- Test file names should match their source file names with `.test` added before the extension
+
+### Testing Framework and Libraries
+
+- **Jest**: Primary testing framework
+- **ts-jest**: For TypeScript support
+- **@testing-library/react**: For React component testing
+- **@testing-library/jest-dom**: For additional DOM matchers
+- **fireEvent**: Preferred method for simulating user interactions (prefer over userEvent for consistency)
+
+### Mocking Strategies
+
+- Use Jest's mocking capabilities to mock external dependencies
+- Database operations should be mocked to avoid actual database interactions
+- Create mock implementations of complex UI components using Jest's mock functions
+- Use the mock files in `/tests/__mocks__/` for common mocks:
+  - `allotment.js` for mocking the Allotment library
+  - `styleMock.js` for handling style imports
+
+### Test Documentation
+
+- Each test file should begin with a clear description of what's being tested
+- Group related tests with descriptive `describe` blocks
+- Write clear test descriptions in `it` or `test` statements that explain the expected behavior
+- Document complex test setups or mocks with comments
+- When testing React components that use contexts, document how the context is being mocked
+
+### React Component Testing Guidelines
+
+- Use React Testing Library's `render` function to render components
+- Create helper functions like `renderWithContext` for components that require context
+- Test both component rendering and user interactions
+- Verify both UI appearance and behavior (e.g., callbacks being called correctly)
+- Use `data-testid` attributes for elements that need to be selected in tests
+- Mock child components when testing parent components in isolation
+- Test error states and loading states when applicable
+
+### Database Testing Guidelines
+
+- Mock the SQLite database class and methods
+- Test both success and error cases for database operations
+- Verify correct SQL query generation when applicable
+- Test edge cases like empty results or invalid inputs
+
+### Coverage Requirements
+
+- Aim for at least 80% code coverage for critical modules
+- Required coverage areas:
+  - Database repositories: High priority
+  - UI components: Medium to high priority
+  - Context providers: High priority
+  - Utility functions: High priority
+
+### Continuous Integration
+
+- All tests must pass before merging PRs
+- New features should include corresponding tests
+- Bug fixes should include regression tests
+- Test coverage should not decrease significantly with new changes
+
+### Test Readability
+
+- Keep test files focused and maintainable
+- Follow the AAA pattern (Arrange, Act, Assert)
+- Use clear variable names that indicate the purpose of test data
+- Prefer multiple focused tests over single complex tests
+
+This protocol should be followed for all new test development, and existing tests should be refactored to match these guidelines when appropriate.
 
 ## Debugging Process
 
