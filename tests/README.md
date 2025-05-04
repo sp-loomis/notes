@@ -186,6 +186,83 @@ These tests verify the main App component, which integrates the TabBar and navig
   - Shows the Note Manager view when the Note Manager tab is clicked
   - Shows the Tag Organizer view when the Tag Organizer tab is clicked
 
+### NoteManagerView Component Tests (`renderer/components/navigation/NoteManagerView.test.tsx`)
+
+These tests verify the functionality of the NoteManagerView component, which displays the Note Manager interface:
+
+- **Empty State**
+
+  - Renders the "No Note Selected" message when no note is selected
+  - Displays a button to create a new note
+
+- **Loading State**
+
+  - Shows a loading indicator when data is being fetched
+
+- **Error State**
+
+  - Displays an error message when an error occurs
+  - Provides a retry button to attempt the operation again
+
+- **Note Creation**
+
+  - Displays a note creation form when the create button is clicked
+  - Successfully calls the createNote function with the correct data when the form is submitted
+  - Selects the newly created note after creation
+
+- **Selected Note View**
+  - Properly displays the selected note's details
+  - Shows a close button to return to the empty state
+  - Returns to the empty state when the close button is clicked
+
+These tests use Jest's mocking capabilities to mock the NotesContext and ComponentsContext, allowing us to test the component's behavior with different state configurations.
+
+### Component Listing Panel Tests (`renderer/components/noteManager/ComponentListingPanel.test.tsx`)
+
+These tests verify the functionality of the ComponentListingPanel component, which displays the list of components for a note and provides component management features:
+
+- **Empty State**
+
+  - Renders the "No components yet" message when no components exist
+  - Displays a button to create a new component
+
+- **Loading State**
+
+  - Shows a loading indicator when data is being fetched
+
+- **Error State**
+
+  - Displays an error message when an error occurs
+
+- **Component Listing**
+
+  - Correctly displays all components with their names and types
+  - Shows type-specific icons for different component types (Markup, Image, GeoJSON, TLDraw)
+  - Displays formatted date for last modification
+  - Highlights the currently selected component
+
+- **Component Selection**
+
+  - Properly calls the selectComponent function when a component is clicked
+
+- **Component Creation**
+
+  - Shows the component creation form when the add button is clicked
+  - Allows specification of component name and type
+  - Creates appropriate initial content based on component type
+  - Selects the newly created component after creation
+
+- **Component Renaming**
+
+  - Enables inline editing of component names
+  - Successfully updates component names when editing is saved
+  - Properly cancels editing when the cancel button is clicked
+
+- **Component Deletion**
+  - Shows a confirmation dialog before deletion
+  - Successfully deletes components when confirmed
+  - Cancels deletion when the cancel button is clicked
+
 ## Testing Approach
 
 ### Mocking Strategy
@@ -220,15 +297,17 @@ Test coverage is tracked using Jest's built-in coverage tool. As of the current 
 
 Future tests will include:
 
-1. Component repository tests
-2. Component versioning functionality
-3. UI component tests
+1. ~~Component repository tests~~ ✅ Implemented
+2. ~~Component versioning functionality~~ ✅ Implemented
+3. Additional UI component tests for remaining components
 4. Search and filtering functionality tests
 5. Integration tests between repositories and UI
 6. End-to-end tests for complete workflows
-7. Navigation component tests (SearchView, NoteManagerView, TagOrganizerView)
-8. Note management UI tests
+7. ~~Navigation component tests (SearchView, NoteManagerView, TagOrganizerView)~~ ✅ Partially implemented (NoteManagerView, TabBar)
+8. ~~Note management UI tests~~ ✅ Partially implemented (NoteAttributesPanel)
 9. Component viewing and editing tests
+10. Error handling and edge case tests for all repositories
+11. Tag Organizer UI comprehensive tests
 
 ## Running Tests
 
