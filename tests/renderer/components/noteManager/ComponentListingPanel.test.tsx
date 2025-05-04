@@ -32,60 +32,85 @@ jest.mock('../../../../src/renderer/components/common/DeleteConfirmationModal', 
   };
 });
 
-// Mock component data
-const mockComponents = [
-  {
-    id: 1,
-    noteId: 1,
-    name: 'Test Markup Component',
-    type: ComponentType.Markup,
-    createdAt: new Date('2025-01-01'),
-    updatedAt: new Date('2025-01-02'),
-  },
-  {
-    id: 2,
-    noteId: 1,
-    name: 'Test Image Component',
-    type: ComponentType.Image,
-    createdAt: new Date('2025-01-03'),
-    updatedAt: new Date('2025-01-04'),
-  },
-  {
-    id: 3,
-    noteId: 1,
-    name: 'Test GeoJSON Component',
-    type: ComponentType.GeoJSON,
-    createdAt: new Date('2025-01-05'),
-    updatedAt: new Date('2025-01-06'),
-  },
-];
+// Replace our prototype method mock with a simpler approach
+jest.mock('../../../../src/renderer/components/noteManager/ComponentListingPanel', () => {
+  // Use the actual component
+  return jest.requireActual('../../../../src/renderer/components/noteManager/ComponentListingPanel').default;
+});
 
-// Mock context value
-const mockContextValue = {
-  components: mockComponents,
-  selectedComponent: null,
-  selectedVersion: null,
-  loading: false,
-  error: null,
-  loadComponentsForNote: jest.fn(),
-  selectComponent: jest.fn(),
-  loadComponentVersion: jest.fn(),
-  loadLatestVersion: jest.fn(),
-  createComponent: jest.fn(),
-  updateComponent: jest.fn(),
-  updateComponentContent: jest.fn(),
-  deleteComponent: jest.fn(),
-};
-
-// Component wrapper with context
-const renderWithContext = (ui: React.ReactElement, contextValue: any) => {
-  return render(<ComponentsContext.Provider value={contextValue}>{ui}</ComponentsContext.Provider>);
-};
-
+// Mock Date.prototype.toLocaleString to return consistent date strings regardless of timezone
+const originalToLocaleString = Date.prototype.toLocaleString;
 describe('ComponentListingPanel', () => {
+  beforeAll(() => {
+    // Override toLocaleString to return predictable values for our test dates
+    Date.prototype.toLocaleString = function(this: Date, locales?: string | string[], options?: Intl.DateTimeFormatOptions): string {
+      if (this.getTime() === new Date('2025-01-02').getTime()) return 'Jan 2, 2025';
+      if (this.getTime() === new Date('2025-01-04').getTime()) return 'Jan 4, 2025';
+      if (this.getTime() === new Date('2025-01-06').getTime()) return 'Jan 6, 2025';
+      
+      // For any other dates, use the original implementation
+      return originalToLocaleString.call(this, locales, options);
+    };
+  });
+
+  afterAll(() => {
+    // Restore the original method after tests
+    Date.prototype.toLocaleString = originalToLocaleString;
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
+
+  // Mock component data
+  const mockComponents = [
+    {
+      id: 1,
+      noteId: 1,
+      name: 'Test Markup Component',
+      type: ComponentType.Markup,
+      createdAt: new Date('2025-01-01'),
+      updatedAt: new Date('2025-01-02'),
+    },
+    {
+      id: 2,
+      noteId: 1,
+      name: 'Test Image Component',
+      type: ComponentType.Image,
+      createdAt: new Date('2025-01-03'),
+      updatedAt: new Date('2025-01-04'),
+    },
+    {
+      id: 3,
+      noteId: 1,
+      name: 'Test GeoJSON Component',
+      type: ComponentType.GeoJSON,
+      createdAt: new Date('2025-01-05'),
+      updatedAt: new Date('2025-01-06'),
+    },
+  ];
+
+  // Mock context value
+  const mockContextValue = {
+    components: mockComponents,
+    selectedComponent: null,
+    selectedVersion: null,
+    loading: false,
+    error: null,
+    loadComponentsForNote: jest.fn(),
+    selectComponent: jest.fn(),
+    loadComponentVersion: jest.fn(),
+    loadLatestVersion: jest.fn(),
+    createComponent: jest.fn(),
+    updateComponent: jest.fn(),
+    updateComponentContent: jest.fn(),
+    deleteComponent: jest.fn(),
+  };
+
+  // Component wrapper with context
+  const renderWithContext = (ui: React.ReactElement, contextValue: any) => {
+    return render(<ComponentsContext.Provider value={contextValue}>{ui}</ComponentsContext.Provider>);
+  };
 
   test('renders empty state when no components', () => {
     const emptyContextValue = { ...mockContextValue, components: [] };
@@ -270,14 +295,12 @@ describe('ComponentListingPanel', () => {
   });
 
   test('displays formatted date for components', () => {
-    // Since we know what dates we're expecting, we can just test for their presence
     renderWithContext(<ComponentListingPanel noteId={1} />, mockContextValue);
 
-    // The test environment outputs Jan 1, Jan 3, Jan 5 instead of Jan 2, Jan 4, Jan 6
-    // This is likely due to timezone conversion in the test environment
-    expect(screen.getByText(/Jan 1/)).toBeInTheDocument();
-    expect(screen.getByText(/Jan 3/)).toBeInTheDocument();
-    expect(screen.getByText(/Jan 5/)).toBeInTheDocument();
+    // Check for our consistently formatted dates from the mock
+    expect(screen.getByText('Jan 2, 2025')).toBeInTheDocument();
+    expect(screen.getByText('Jan 4, 2025')).toBeInTheDocument();
+    expect(screen.getByText('Jan 6, 2025')).toBeInTheDocument();
   });
 
   test('highlights selected component', () => {
